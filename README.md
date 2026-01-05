@@ -166,7 +166,7 @@ Right-click the tray icon for quick actions:
 
 Logs are stored in:
 ```
-%APPDATA%\com.avd.latency-checker\logs\
+%APPDATA%\AVDLatencyChecker\logs\
 ```
 
 Example log file: `avd_latency_2026-01-04.log`
@@ -204,17 +204,17 @@ Format (JSON Lines):
 
 **Main Settings:**
 ```
-%APPDATA%\com.avd.latency-checker\settings.json
+%APPDATA%\AVDHealthMonitor\settings.json
 ```
 
 **Session Host Endpoints:**
 ```
-%APPDATA%\com.avd.latency-checker\sessionhost-endpoints.json
+%APPDATA%\AVDHealthMonitor\sessionhost-endpoints.json
 ```
 
 **End User Endpoints:**
 ```
-%APPDATA%\com.avd.latency-checker\enduser-endpoints.json
+%APPDATA%\AVDHealthMonitor\enduser-endpoints.json
 ```
 
 ### Session Host Endpoints (Default)
