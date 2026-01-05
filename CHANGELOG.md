@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.2.1...avd-health-monitor-v0.2.2) (2026-01-05)
+
+
+### Bug Fixes
+
+* unify log and config paths to use AVDHealthMonitor folder ([272e54b](https://github.com/seb07-cloud/avd-health-monitor/commit/272e54b4960b89a839e6ea0dd54bb3c95cdf1f96))
+* update log and autostart paths to use AVDHealthMonitor folder ([239d4f3](https://github.com/seb07-cloud/avd-health-monitor/commit/239d4f318e0bf004e1a0c6e93005e051e19047cf))
+
+
+### Documentation
+
+* correct log path to use AVDHealthMonitor folder ([bfb584d](https://github.com/seb07-cloud/avd-health-monitor/commit/bfb584d3dd16638e33a9008e7ad388af539c9ff7))
+* update README with correct log and config paths ([a2aa0d8](https://github.com/seb07-cloud/avd-health-monitor/commit/a2aa0d8aaf006d5fceac63d6f5a1ac33d4813d85))
+
 ## [0.2.1](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.2.0...avd-health-monitor-v0.2.1) (2026-01-05)
 
 
