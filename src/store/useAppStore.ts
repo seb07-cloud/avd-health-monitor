@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { invoke } from '@tauri-apps/api/core';
-import type { Endpoint, AppConfig, EndpointStatus, LatencyThresholds, EndpointError, ModeInfo, CustomEndpoint } from '../types';
+import type { Endpoint, AppConfig, EndpointStatus, LatencyThresholds, EndpointError, ModeInfo, CustomEndpoint, FSLogixPath, FSLogixStatus } from '../types';
 import { getLatencyStatus } from '../lib/utils';
 import { parseBackendError, getUserFriendlyErrorMessage } from '../errors';
 
@@ -69,6 +69,10 @@ const DEFAULT_CONFIG: AppConfig = {
   alertThreshold: 3,
   alertCooldown: 5,
   graphTimeRange: 1,
+  fslogixEnabled: true,
+  fslogixTestInterval: 60,
+  fslogixAlertThreshold: 3,
+  fslogixAlertCooldown: 5,
 };
 
 interface AppState {
@@ -82,6 +86,10 @@ interface AppState {
   endpointStatuses: Map<string, EndpointStatus>;
   isMonitoring: boolean;
   isPaused: boolean;
+
+  // FSLogix state
+  fslogixPaths: FSLogixPath[];
+  fslogixStatuses: Map<string, FSLogixStatus>;
 
   // UI State
   currentView: 'dashboard' | 'settings';
@@ -118,6 +126,13 @@ interface AppState {
 
   // Restore history for endpoints (used when loading endpoints from settings.json)
   restoreHistoryForEndpoints: (endpoints: Endpoint[]) => void;
+
+  // FSLogix actions
+  setFSLogixPaths: (paths: FSLogixPath[]) => void;
+  updateFSLogixStatus: (pathId: string, reachable: boolean, latency: number | null, error: string | null) => void;
+  setFSLogixLoading: (pathId: string, isLoading: boolean) => void;
+  setAllFSLogixLoading: (isLoading: boolean) => void;
+  updateFSLogixPathMuted: (pathId: string, muted: boolean) => void;
 }
 
 // Storage key for localStorage
@@ -200,6 +215,8 @@ export const useAppStore = create<AppState>()(
       endpointStatuses: new Map(),
       isMonitoring: false,
       isPaused: false,
+      fslogixPaths: [],
+      fslogixStatuses: new Map(),
       currentView: 'dashboard',
       pendingTestTrigger: false,
 
@@ -555,6 +572,114 @@ export const useAppStore = create<AppState>()(
             return state;
           }
         }),
+
+      // FSLogix actions
+      setFSLogixPaths: (paths) => {
+        set({ fslogixPaths: paths });
+      },
+
+      updateFSLogixStatus: (pathId, reachable, latency, error) =>
+        set((state) => {
+          const path = state.fslogixPaths.find((p) => p.id === pathId);
+          if (!path) return state;
+
+          const newStatuses = new Map(state.fslogixStatuses);
+          const timestamp = Date.now();
+          const currentStatus = newStatuses.get(pathId);
+
+          // Track consecutive failures: increment on failure, reset on success
+          const consecutiveFailures = reachable
+            ? 0
+            : (currentStatus?.consecutiveFailures ?? 0) + 1;
+
+          const status: FSLogixStatus = {
+            path,
+            reachable,
+            latency,
+            error,
+            isLoading: false,
+            lastUpdated: timestamp,
+            consecutiveFailures,
+          };
+
+          newStatuses.set(pathId, status);
+          return { fslogixStatuses: newStatuses };
+        }),
+
+      setFSLogixLoading: (pathId, isLoading) =>
+        set((state) => {
+          const path = state.fslogixPaths.find((p) => p.id === pathId);
+          if (!path) return state;
+
+          const newStatuses = new Map(state.fslogixStatuses);
+          const currentStatus = newStatuses.get(pathId);
+
+          const status: FSLogixStatus = currentStatus
+            ? { ...currentStatus, isLoading }
+            : {
+                path,
+                reachable: false,
+                latency: null,
+                error: null,
+                isLoading,
+                lastUpdated: null,
+                consecutiveFailures: 0,
+              };
+
+          newStatuses.set(pathId, status);
+          return { fslogixStatuses: newStatuses };
+        }),
+
+      setAllFSLogixLoading: (isLoading) =>
+        set((state) => {
+          const newStatuses = new Map(state.fslogixStatuses);
+
+          for (const path of state.fslogixPaths) {
+            const currentStatus = newStatuses.get(path.id);
+
+            const status: FSLogixStatus = currentStatus
+              ? { ...currentStatus, isLoading }
+              : {
+                  path,
+                  reachable: false,
+                  latency: null,
+                  error: null,
+                  isLoading,
+                  lastUpdated: null,
+                  consecutiveFailures: 0,
+                };
+
+            newStatuses.set(path.id, status);
+          }
+
+          return { fslogixStatuses: newStatuses };
+        }),
+
+      updateFSLogixPathMuted: (pathId, muted) => {
+        // Update the path in state
+        set((state) => {
+          const fslogixPaths = state.fslogixPaths.map((path) =>
+            path.id === pathId ? { ...path, muted } : path
+          );
+
+          // Also update the path reference in fslogixStatuses
+          const newStatuses = new Map(state.fslogixStatuses);
+          const currentStatus = newStatuses.get(pathId);
+          if (currentStatus) {
+            newStatuses.set(pathId, {
+              ...currentStatus,
+              path: { ...currentStatus.path, muted },
+            });
+          }
+
+          return { fslogixPaths, fslogixStatuses: newStatuses };
+        });
+
+        // Persist to settings.json via Tauri command
+        invoke('update_fslogix_path_muted', { pathId, muted }).catch((error) => {
+          console.error('[useAppStore] Failed to persist FSLogix muted state:', error);
+        });
+      },
     }),
     {
       name: STORAGE_KEY,

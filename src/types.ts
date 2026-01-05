@@ -60,6 +60,10 @@ export interface AppConfig {
   alertThreshold: number; // Number of consecutive high latency checks before showing notification
   alertCooldown: number; // Minutes between repeated alerts (default: 5)
   graphTimeRange: number; // Hours of history to show in graph (default: 1)
+  fslogixEnabled: boolean; // Whether to monitor FSLogix storage paths
+  fslogixTestInterval: number; // Seconds between FSLogix connectivity tests (default: 60)
+  fslogixAlertThreshold: number; // Consecutive failures before FSLogix alert (default: 3)
+  fslogixAlertCooldown: number; // Minutes between repeated FSLogix alerts (default: 5)
 }
 
 // Custom endpoint added by user (stored in settings.json)
@@ -107,4 +111,25 @@ export interface EndpointStatus {
   history: LatencyHistory['data'];
   error: EndpointError | null; // Current error state if test failed
   isLoading: boolean; // Whether a test is currently running
+}
+
+// FSLogix Storage Path from Windows Registry
+export interface FSLogixPath {
+  id: string;
+  type: 'profile' | 'odfc';
+  path: string;
+  hostname: string;
+  port: number;
+  muted?: boolean; // If true, alerts are suppressed for this path
+}
+
+// FSLogix connectivity status
+export interface FSLogixStatus {
+  path: FSLogixPath;
+  reachable: boolean;
+  latency: number | null;
+  error: string | null;
+  isLoading: boolean;
+  lastUpdated: number | null;
+  consecutiveFailures: number; // Track consecutive failures for alerting
 }
