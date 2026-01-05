@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.1.0...avd-health-monitor-v0.2.0) (2026-01-05)
+
+
+### Features
+
+* initial commit - AVD Health Monitor v0.1.0 ([28350f0](https://github.com/seb07-cloud/avd-health-monitor/commit/28350f002e59b6e141ffbf53124cf5bb037c6a4b))
+
 ## 0.1.0 (Unreleased)
 
 ### Features
