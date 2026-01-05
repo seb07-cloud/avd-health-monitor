@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.2.0...avd-health-monitor-v0.2.1) (2026-01-05)
+
+
+### Bug Fixes
+
+* update AppData folder name and improve resource file discovery ([c3f9699](https://github.com/seb07-cloud/avd-health-monitor/commit/c3f96990cd02055f9adc7d1bc0c229a1a6ec4c64))
+
 ## [0.2.0](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.1.0...avd-health-monitor-v0.2.0) (2026-01-05)
 
 
