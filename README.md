@@ -19,7 +19,12 @@ Real-time endpoint monitoring with latency graphs, statistics, and enable/disabl
 ### Settings Panel
 Configure application mode, thresholds, notifications, and manage endpoints.
 
+#### General Settings
+
 ![Settings Panel - Mode Selection](media/settings_1.png)
+
+#### Endpoint Monitoring - Settings
+
 ![Settings Panel - Endpoints](media/settings_2.png)
 
 ### System Tray
@@ -31,6 +36,16 @@ Dynamic color-coded tray icon shows current status at a glance. Right-click for 
 Consolidated alerts with details for all affected endpoints.
 
 ![Toast Notification](media/toast.png)
+
+### FSLogix Storage Monitoring (Session Host Mode)
+Real-time connectivity monitoring for FSLogix profile and ODFC storage paths.
+
+![FSLogix Monitoring](media/fslogix.png)
+
+#### FSLogix Monitoring - Settings
+Configure FSLogix-specific test intervals, alert thresholds, and mute individual paths.
+
+![Settings Panel - Endpoints](media/settings_3.png)
 
 ---
 
@@ -44,6 +59,7 @@ The application supports two distinct monitoring modes with pre-configured endpo
 - For Azure Virtual Desktop session host VMs
 - Monitors endpoints required for AVD agent, RD Gateway, Windows activation, and core services
 - Includes wildcard domain expansion (e.g., `*.wvd.microsoft.com` expands to rdgateway, rdweb, client, rdbroker)
+- **FSLogix Storage Monitoring** - Automatically detects and monitors FSLogix profile/ODFC storage paths
 
 **End User Device Mode**
 - For client devices connecting to AVD (Windows, macOS, iOS, Android, Web)
@@ -76,6 +92,14 @@ Switching modes automatically loads the appropriate endpoints and triggers a con
 - **Mute Individual Endpoints** - Suppress alerts for specific endpoints without disabling monitoring
 - **Consolidated Alerts** - Multiple endpoint issues combined into single notification
 - **Visual Feedback** - Tray icon changes color based on worst endpoint status
+
+### FSLogix Storage Monitoring (Session Host Only)
+- **Automatic Detection** - Reads FSLogix profile and ODFC container paths from Windows Registry
+- **Real-time Connectivity** - Tests SMB connectivity to storage endpoints (port 445)
+- **Separate Test Interval** - Configure FSLogix test frequency independently from endpoint tests (default: 60 seconds)
+- **Consecutive Failure Alerts** - Only alert after N consecutive failures (default: 3)
+- **Mute Individual Paths** - Suppress alerts for specific storage paths without disabling monitoring
+- **Visual Status** - Green/red indicators show reachable/unreachable status with latency
 
 ### Configuration
 - **Separate Endpoint Files** - Mode-specific JSON configuration files for session host and end user endpoints
@@ -190,6 +214,10 @@ Format (JSON Lines):
 | Alert Threshold | 3 checks | Consecutive failures before alert |
 | Alert Cooldown | 5 minutes | Minimum time between alerts |
 | Graph Time Range | 1 hour | History shown in graphs |
+| FSLogix Enabled | Yes | Enable FSLogix storage monitoring (Session Host only) |
+| FSLogix Test Interval | 60 seconds | How often to test FSLogix storage paths |
+| FSLogix Alert Threshold | 3 checks | Consecutive failures before FSLogix alert |
+| FSLogix Alert Cooldown | 5 minutes | Minimum time between FSLogix alerts |
 
 ### Latency Thresholds
 
@@ -271,6 +299,7 @@ avd-health-monitor/
 │   ├── components/
 │   │   ├── Dashboard.tsx         # Main monitoring view
 │   │   ├── EndpointCard.tsx      # Individual endpoint display
+│   │   ├── FSLogixSection.tsx    # FSLogix storage monitoring
 │   │   └── SettingsPanel.tsx     # Configuration UI
 │   ├── hooks/
 │   │   ├── useTrayIcon.ts        # Tray icon + notifications
@@ -288,7 +317,8 @@ avd-health-monitor/
 │   │   ├── settings.rs           # Settings + endpoint file management
 │   │   ├── tray_icon.rs          # Dynamic icon generation
 │   │   ├── logger.rs             # File logging
-│   │   └── autostart.rs          # Windows Registry auto-start
+│   │   ├── autostart.rs          # Windows Registry auto-start
+│   │   └── fslogix.rs            # FSLogix registry detection
 │   ├── resources/
 │   │   ├── settings.json         # Default settings
 │   │   ├── sessionhost-endpoints.json
@@ -375,6 +405,18 @@ pnpm exec tsc --noEmit
 ### Mode switch doesn't trigger test
 - Ensure you're clicking the mode button, not just hovering
 - Check browser console for errors (F12 in dev mode)
+
+### FSLogix paths not showing
+- FSLogix monitoring only works in **Session Host Mode**
+- Ensure FSLogix is installed and configured on the VM
+- Check that FSLogix registry keys exist: `HKLM\SOFTWARE\FSLogix\Profiles` or `HKLM\SOFTWARE\Policies\FSLogix\ODFC`
+- Verify VHDLocations or CCDLocations registry values are set
+
+### FSLogix shows unreachable but storage works
+- The app tests SMB connectivity on port 445
+- Ensure SMB traffic is allowed through any firewalls
+- Check that the storage account allows SMB connections from the VM
+- Private endpoints may require specific DNS configuration
 
 ---
 

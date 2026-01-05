@@ -14,10 +14,12 @@ mod tray_icon;
 mod logger;
 mod autostart;
 mod settings;
+mod fslogix;
 
 use tray_icon::{generate_tray_icon, IconStatus, LatencyThresholds};
 use logger::Logger;
-use settings::{SettingsFile, SettingsResponse, AppMode, get_settings_path, load_settings, load_settings_with_endpoints, load_settings_with_endpoints_for_mode, save_settings, initialize_settings, update_endpoint_state};
+use settings::{SettingsFile, SettingsResponse, AppMode, FSLogixPathState, get_settings_path, load_settings, load_settings_with_endpoints, load_settings_with_endpoints_for_mode, save_settings, initialize_settings, update_endpoint_state};
+use fslogix::FSLogixPath;
 
 // Global tray icon reference (using concrete Wry runtime type)
 static TRAY_ICON: Lazy<Arc<Mutex<Option<TrayIcon<tauri::Wry>>>>> = Lazy::new(|| Arc::new(Mutex::new(None)));
@@ -242,6 +244,40 @@ fn open_resource_file(app: &tauri::AppHandle, filename: &str) -> Result<(), Stri
 }
 
 #[tauri::command]
+fn get_fslogix_storage_paths() -> Vec<FSLogixPath> {
+    let mut paths = fslogix::get_fslogix_paths();
+
+    // Apply muted state from settings file
+    if let Ok(settings) = load_settings() {
+        for path in &mut paths {
+            // Check if this path has a saved muted state
+            if let Some(state) = settings.fslogix_path_states.iter().find(|s| s.id == path.id) {
+                path.muted = Some(state.muted);
+            }
+        }
+    }
+
+    paths
+}
+
+#[tauri::command]
+fn update_fslogix_path_muted(path_id: String, muted: bool) -> Result<(), String> {
+    let mut settings = load_settings().map_err(|e| e.to_string())?;
+
+    // Find existing state or create new one
+    if let Some(state) = settings.fslogix_path_states.iter_mut().find(|s| s.id == path_id) {
+        state.muted = muted;
+    } else {
+        settings.fslogix_path_states.push(FSLogixPathState {
+            id: path_id,
+            muted,
+        });
+    }
+
+    save_settings(&settings).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 fn update_endpoint(
     app: tauri::AppHandle,
     mode: String,
@@ -407,6 +443,8 @@ pub fn run() {
             write_settings_file,
             open_settings_file,
             update_endpoint,
+            get_fslogix_storage_paths,
+            update_fslogix_path_muted,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");

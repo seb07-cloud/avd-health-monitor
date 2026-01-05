@@ -1,5 +1,6 @@
 import { useAppStore } from '../store/useAppStore';
 import { EndpointTile } from './EndpointTile';
+import { FSLogixSection } from './FSLogixSection';
 import { Info } from 'lucide-react';
 
 export function Dashboard() {
@@ -91,6 +92,9 @@ export function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* FSLogix Storage Section */}
+      <FSLogixSection />
 
       {/* Endpoint Categories */}
       {sortedCategories.map((category) => {

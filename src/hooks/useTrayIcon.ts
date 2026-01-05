@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { listen, UnlistenFn } from '@tauri-apps/api/event';
-import type { LatencyStatus, LatencyThresholds, EndpointStatus } from '../types';
+import type { LatencyStatus, LatencyThresholds, EndpointStatus, FSLogixStatus } from '../types';
 import { getLatencyStatus, getStatusLabel } from '../lib/utils';
 import { TauriError, ErrorCode, parseBackendError } from '../errors';
 
@@ -15,10 +15,20 @@ interface UseTrayIconProps {
   notificationsEnabled: boolean;
   /** Optional: endpoint statuses for more detailed notifications */
   endpointStatuses?: Map<string, EndpointStatus>;
+  /** Optional: FSLogix statuses for storage connectivity alerts */
+  fslogixStatuses?: Map<string, FSLogixStatus>;
+  /** Whether FSLogix monitoring is enabled */
+  fslogixEnabled?: boolean;
+  /** Whether app is in Session Host mode (FSLogix only applies to session hosts) */
+  isSessionHostMode?: boolean;
   /** Number of consecutive high latency checks before showing notification (default: 3) */
   alertThreshold?: number;
+  /** Number of consecutive FSLogix failures before showing notification (default: 3) */
+  fslogixAlertThreshold?: number;
   /** Minutes between repeated alerts (default: 5) */
   alertCooldown?: number;
+  /** Minutes between repeated FSLogix alerts (default: 5) */
+  fslogixAlertCooldown?: number;
 }
 
 interface TrayIconError {
@@ -59,12 +69,19 @@ export function useTrayIcon({
   thresholds,
   notificationsEnabled,
   endpointStatuses,
+  fslogixStatuses,
+  fslogixEnabled = true,
+  isSessionHostMode = true,
   alertThreshold = 3,
+  fslogixAlertThreshold = 3,
   alertCooldown = 5,
+  fslogixAlertCooldown = 5,
 }: UseTrayIconProps) {
   const lastNotifiedStatus = useRef<LatencyStatus | null>(null);
   // Track last notification time for cooldown enforcement
   const lastNotificationTime = useRef<number>(0);
+  // Track last FSLogix notification time separately
+  const lastFSLogixNotificationTime = useRef<number>(0);
   // Track consecutive high latency checks
   const consecutiveHighLatencyCount = useRef<number>(0);
   // Track previous average latency to detect new test cycles
@@ -73,6 +90,9 @@ export function useTrayIcon({
   const lastError = useRef<TrayIconError | null>(null);
   // Track if component is mounted
   const isMounted = useRef<boolean>(true);
+  // Prevent concurrent notification sends (fixes alert queue issue)
+  const isLatencyNotificationInProgress = useRef<boolean>(false);
+  const isFSLogixNotificationInProgress = useRef<boolean>(false);
 
   // Safe invoke wrapper that handles errors properly
   const safeInvoke = useCallback(
@@ -208,7 +228,6 @@ export function useTrayIcon({
 
     let cancelled = false;
     const status = getLatencyStatus(averageLatency, thresholds);
-    const now = Date.now();
     const cooldownMs = alertCooldown * 60 * 1000;
 
     // Only process if this is a new test result (latency value changed)
@@ -223,44 +242,60 @@ export function useTrayIcon({
       // Increment consecutive high latency counter
       consecutiveHighLatencyCount.current += 1;
 
-      console.log(`[useTrayIcon] High latency detected. Consecutive count: ${consecutiveHighLatencyCount.current}/${alertThreshold}`);
-
-      const isCooldownExpired = now - lastNotificationTime.current >= cooldownMs;
+      // Check cooldown first - use fresh Date.now() for accurate comparison
+      const timeSinceLastNotification = Date.now() - lastNotificationTime.current;
+      const isCooldownExpired = lastNotificationTime.current === 0 || timeSinceLastNotification >= cooldownMs;
       const meetsThreshold = consecutiveHighLatencyCount.current >= alertThreshold;
+
+      console.log(`[useTrayIcon] High latency detected. Consecutive count: ${consecutiveHighLatencyCount.current}/${alertThreshold}, cooldown expired: ${isCooldownExpired} (${Math.round(timeSinceLastNotification / 1000)}s since last)`);
 
       // Only send notification if:
       // 1. Consecutive count meets or exceeds threshold
       // 2. Cooldown has expired since last notification
-      if (meetsThreshold && isCooldownExpired) {
+      // 3. No notification is currently being sent (prevents queue buildup)
+      if (meetsThreshold && isCooldownExpired && !isLatencyNotificationInProgress.current) {
         const sendNotification = async (): Promise<void> => {
-          if (cancelled) return;
+          if (cancelled || isLatencyNotificationInProgress.current) return;
 
-          // Build consolidated notification with all affected endpoints
-          const title = status === 'critical'
-            ? 'Critical Latency Detected'
-            : 'High Latency Warning';
+          // Mark notification as in progress to prevent concurrent sends
+          isLatencyNotificationInProgress.current = true;
 
-          // Body includes all endpoints with their status
-          const body = buildNotificationBody(averageLatency, status);
+          try {
+            // Build consolidated notification with all affected endpoints
+            const title = status === 'critical'
+              ? 'Critical Latency Detected'
+              : 'High Latency Warning';
 
-          console.log(`[useTrayIcon] Sending notification: ${title}`);
+            // Body includes all endpoints with their status
+            const body = buildNotificationBody(averageLatency, status);
 
-          const result = await safeInvoke(
-            'send_notification',
-            { title, body },
-            ErrorCode.NOTIFICATION_FAILED
-          );
+            console.log(`[useTrayIcon] Sending notification: ${title}`);
 
-          // Only update state if notification was sent successfully
-          if (result !== null && !cancelled) {
-            lastNotifiedStatus.current = status;
-            lastNotificationTime.current = now;
-            // Reset counter after notification is sent
-            consecutiveHighLatencyCount.current = 0;
+            const result = await safeInvoke(
+              'send_notification',
+              { title, body },
+              ErrorCode.NOTIFICATION_FAILED
+            );
+
+            // Only update state if notification was sent successfully
+            if (result !== null && !cancelled) {
+              lastNotifiedStatus.current = status;
+              // Use fresh timestamp when notification is actually sent
+              lastNotificationTime.current = Date.now();
+              // Reset counter after notification is sent
+              consecutiveHighLatencyCount.current = 0;
+              console.log(`[useTrayIcon] Notification sent, cooldown reset to ${alertCooldown} minutes`);
+            }
+          } finally {
+            isLatencyNotificationInProgress.current = false;
           }
         };
 
         sendNotification();
+      } else if (meetsThreshold && !isCooldownExpired) {
+        // Threshold met but still in cooldown - log but don't reset counter
+        const remainingCooldown = Math.round((cooldownMs - timeSinceLastNotification) / 1000);
+        console.log(`[useTrayIcon] Threshold met but cooldown active. ${remainingCooldown}s remaining`);
       }
     } else {
       // No non-muted endpoints with issues - reset notification state
@@ -273,6 +308,93 @@ export function useTrayIcon({
       cancelled = true;
     };
   }, [averageLatency, thresholds, notificationsEnabled, alertThreshold, alertCooldown, safeInvoke, buildNotificationBody, hasNonMutedAlerts]);
+
+  // FSLogix connectivity alerts - separate from latency alerts
+  // Triggers when any FSLogix path has consecutive failures >= fslogixAlertThreshold
+  // Only runs in Session Host mode (FSLogix is not relevant for end-user devices)
+  useEffect(() => {
+    if (!notificationsEnabled || !fslogixEnabled || !isSessionHostMode || !fslogixStatuses || fslogixStatuses.size === 0) {
+      return;
+    }
+
+    let cancelled = false;
+    const cooldownMs = fslogixAlertCooldown * 60 * 1000;
+
+    // Find FSLogix paths that have reached the consecutive failure threshold
+    // Skip muted paths - they should not trigger alerts
+    const failedPaths: Array<{ name: string; type: string; consecutiveFailures: number }> = [];
+
+    fslogixStatuses.forEach((status) => {
+      // Skip muted paths - alerts are suppressed
+      if (status.path.muted === true) return;
+
+      // Only alert if consecutive failures meet or exceed the FSLogix-specific threshold
+      if (status.consecutiveFailures >= fslogixAlertThreshold) {
+        failedPaths.push({
+          name: status.path.hostname,
+          type: status.path.type === 'profile' ? 'Profile' : 'ODFC',
+          consecutiveFailures: status.consecutiveFailures,
+        });
+      }
+    });
+
+    // If no paths have reached the threshold, nothing to do
+    if (failedPaths.length === 0) {
+      return;
+    }
+
+    // Check cooldown - use fresh Date.now() for accurate comparison
+    const timeSinceLastNotification = Date.now() - lastFSLogixNotificationTime.current;
+    const isCooldownExpired = lastFSLogixNotificationTime.current === 0 || timeSinceLastNotification >= cooldownMs;
+    if (!isCooldownExpired) {
+      const remainingCooldown = Math.round((cooldownMs - timeSinceLastNotification) / 1000);
+      console.log(`[useTrayIcon] FSLogix alert skipped - cooldown not expired (${remainingCooldown}s remaining)`);
+      return;
+    }
+
+    // Skip if a notification is already being sent (prevents queue buildup)
+    if (isFSLogixNotificationInProgress.current) {
+      console.log(`[useTrayIcon] FSLogix alert skipped - notification already in progress`);
+      return;
+    }
+
+    const sendFSLogixNotification = async (): Promise<void> => {
+      if (cancelled || isFSLogixNotificationInProgress.current) return;
+
+      // Mark notification as in progress to prevent concurrent sends
+      isFSLogixNotificationInProgress.current = true;
+
+      try {
+        const title = 'FSLogix Storage Unreachable';
+        const pathLines = failedPaths.map(
+          (p) => `${p.type}: ${p.name} (${p.consecutiveFailures} failures)`
+        );
+        const body = `The following storage paths are unreachable:\n${pathLines.join('\n')}`;
+
+        console.log(`[useTrayIcon] Sending FSLogix alert for ${failedPaths.length} path(s)`);
+
+        const result = await safeInvoke(
+          'send_notification',
+          { title, body },
+          ErrorCode.NOTIFICATION_FAILED
+        );
+
+        if (result !== null && !cancelled) {
+          // Use fresh timestamp when notification is actually sent
+          lastFSLogixNotificationTime.current = Date.now();
+          console.log(`[useTrayIcon] FSLogix notification sent, cooldown reset to ${fslogixAlertCooldown} minutes`);
+        }
+      } finally {
+        isFSLogixNotificationInProgress.current = false;
+      }
+    };
+
+    sendFSLogixNotification();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [fslogixStatuses, fslogixEnabled, isSessionHostMode, notificationsEnabled, fslogixAlertThreshold, fslogixAlertCooldown, safeInvoke]);
 
   // Listen for tray events with proper error handling
   useEffect(() => {

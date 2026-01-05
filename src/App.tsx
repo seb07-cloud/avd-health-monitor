@@ -9,6 +9,7 @@ import { cn } from './lib/utils';
 import { useTrayIcon } from './hooks/useTrayIcon';
 import { useSettingsSync } from './hooks/useSettingsSync';
 import { testMultipleEndpoints } from './services/latencyService';
+import { fetchFSLogixPaths, testAllFSLogixPaths } from './services/fslogixService';
 
 function AppContent() {
   const {
@@ -22,7 +23,11 @@ function AppContent() {
     config,
     updateLatency,
     endpointStatuses,
+    fslogixStatuses,
     setAllEndpointsLoading,
+    setFSLogixPaths,
+    updateFSLogixStatus,
+    setAllFSLogixLoading,
   } = useAppStore();
 
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
@@ -50,8 +55,13 @@ function AppContent() {
     thresholds: config.thresholds,
     notificationsEnabled: config.notificationsEnabled,
     endpointStatuses, // Pass endpoint statuses for detailed notifications
+    fslogixStatuses, // Pass FSLogix statuses for storage connectivity alerts
+    fslogixEnabled: config.fslogixEnabled, // Whether FSLogix monitoring is enabled
+    isSessionHostMode: config.mode === 'sessionhost', // FSLogix only applies to session hosts
     alertThreshold: config.alertThreshold, // Consecutive checks before notification
+    fslogixAlertThreshold: config.fslogixAlertThreshold, // Consecutive FSLogix failures before alert
     alertCooldown: config.alertCooldown, // Minutes between repeated alerts
+    fslogixAlertCooldown: config.fslogixAlertCooldown, // Minutes between repeated FSLogix alerts
   });
 
   // Use settings sync hook to load settings from JSON on startup and watch for changes
@@ -100,18 +110,23 @@ function AppContent() {
     fetchVersion();
   }, []);
 
-  // Parallelized latency testing function with deduplication
+  // Request deduplication: track if FSLogix test is currently in progress
+  const isFSLogixTestingRef = useRef(false);
+
+  // Endpoint latency testing function with deduplication
   // Uses fresh state from the store to avoid stale closure issues after mode switch
-  const runTests = useCallback(async () => {
+  const runEndpointTests = useCallback(async () => {
     // Prevent overlapping requests
     if (isTestingRef.current) {
-      console.log('Test already in progress, skipping...');
+      console.log('Endpoint test already in progress, skipping...');
       return;
     }
 
-    // Get fresh endpoints from store to avoid stale closure after mode switch
-    const currentEndpoints = useAppStore.getState().endpoints;
+    // Get fresh state from store to avoid stale closure after mode switch
+    const state = useAppStore.getState();
+    const currentEndpoints = state.endpoints;
     const enabledEndpoints = currentEndpoints.filter((e) => e.enabled);
+
     if (enabledEndpoints.length === 0) {
       console.log('[App] No enabled endpoints to test');
       return;
@@ -124,7 +139,6 @@ function AppContent() {
     try {
       // Test all endpoints in parallel using the latency service
       const results = await testMultipleEndpoints(enabledEndpoints);
-
       // Process results - pass error for proper error message handling
       results.forEach((result) => {
         if (result.success) {
@@ -137,7 +151,7 @@ function AppContent() {
       });
     } catch (error) {
       // Handle unexpected errors during testing
-      console.error('Unexpected error during latency tests:', error);
+      console.error('Unexpected error during endpoint tests:', error);
       // Mark all endpoints as failed
       enabledEndpoints.forEach((endpoint) => {
         updateLatency(endpoint.id, 0, false, error);
@@ -148,6 +162,46 @@ function AppContent() {
       setAllEndpointsLoading(false);
     }
   }, [updateLatency, setAllEndpointsLoading]);
+
+  // FSLogix connectivity testing function (separate from endpoint tests)
+  const runFSLogixTests = useCallback(async () => {
+    // Prevent overlapping requests
+    if (isFSLogixTestingRef.current) {
+      console.log('FSLogix test already in progress, skipping...');
+      return;
+    }
+
+    // Get fresh state from store
+    const state = useAppStore.getState();
+    const currentFSLogixPaths = state.fslogixPaths;
+    const fslogixEnabled = state.config.fslogixEnabled;
+    const isSessionHostMode = state.config.mode === 'sessionhost';
+
+    // Only test FSLogix in Session Host mode, when enabled, and paths exist
+    if (!isSessionHostMode || !fslogixEnabled || currentFSLogixPaths.length === 0) {
+      return;
+    }
+
+    isFSLogixTestingRef.current = true;
+    setAllFSLogixLoading(true);
+
+    try {
+      await testAllFSLogixPaths(currentFSLogixPaths, (result) => {
+        updateFSLogixStatus(result.pathId, result.reachable, result.latency, result.error);
+      });
+    } catch (error) {
+      console.error('Unexpected error during FSLogix tests:', error);
+    } finally {
+      isFSLogixTestingRef.current = false;
+      setAllFSLogixLoading(false);
+    }
+  }, [updateFSLogixStatus, setAllFSLogixLoading]);
+
+  // Combined test function for manual "Test Now" button and initial tests
+  const runAllTests = useCallback(async () => {
+    // Run both tests in parallel
+    await Promise.all([runEndpointTests(), runFSLogixTests()]);
+  }, [runEndpointTests, runFSLogixTests]);
   // Log directory info on startup
   useEffect(() => {
     const logDirectoryInfo = async () => {
@@ -161,6 +215,22 @@ function AppContent() {
     logDirectoryInfo();
   }, []);
 
+  // Load FSLogix paths from registry on startup
+  useEffect(() => {
+    const loadFSLogixPaths = async () => {
+      try {
+        const paths = await fetchFSLogixPaths();
+        setFSLogixPaths(paths);
+        if (paths.length > 0) {
+          console.log(`📂 Found ${paths.length} FSLogix storage path(s)`);
+        }
+      } catch (error) {
+        console.error('Failed to load FSLogix paths:', error);
+      }
+    };
+    loadFSLogixPaths();
+  }, [setFSLogixPaths]);
+
   // Run initial test when endpoints are first loaded
   // This ensures tests run immediately on app startup, regardless of the test interval
   useEffect(() => {
@@ -170,19 +240,35 @@ function AppContent() {
     if (!hasRunInitialTest.current && enabledEndpoints.length > 1 && isMonitoring && !isPaused) {
       hasRunInitialTest.current = true;
       console.log('[App] Running initial test for', enabledEndpoints.length, 'endpoints');
-      runTests();
+      runAllTests();
     }
-  }, [endpoints.length, isMonitoring, isPaused, runTests]);
+  }, [endpoints.length, isMonitoring, isPaused, runAllTests]);
 
-  // Latency testing loop (runs on interval after initial test)
+  // Endpoint latency testing loop (runs on testInterval)
   useEffect(() => {
     if (!isMonitoring || isPaused) return;
 
-    // Set up the interval for subsequent tests
-    const interval = setInterval(runTests, config.testInterval * 1000);
+    // Set up the interval for endpoint tests
+    const interval = setInterval(runEndpointTests, config.testInterval * 1000);
 
     return () => clearInterval(interval);
-  }, [isMonitoring, isPaused, config.testInterval, runTests]);
+  }, [isMonitoring, isPaused, config.testInterval, runEndpointTests]);
+
+  // FSLogix connectivity testing loop (runs on fslogixTestInterval, separate from endpoints)
+  useEffect(() => {
+    if (!isMonitoring || isPaused) return;
+
+    // Only run FSLogix tests in Session Host mode when enabled
+    const state = useAppStore.getState();
+    if (state.config.mode !== 'sessionhost' || !state.config.fslogixEnabled) {
+      return;
+    }
+
+    // Set up the interval for FSLogix tests
+    const interval = setInterval(runFSLogixTests, config.fslogixTestInterval * 1000);
+
+    return () => clearInterval(interval);
+  }, [isMonitoring, isPaused, config.fslogixTestInterval, config.mode, config.fslogixEnabled, runFSLogixTests]);
 
   // Watch for pending test trigger (e.g., after mode switch)
   // Use Zustand subscribe to avoid React re-render timing issues
@@ -195,17 +281,17 @@ function AppContent() {
           useAppStore.getState().clearTestTrigger();
           // Small delay to ensure endpoints are fully loaded in the store
           setTimeout(() => {
-            runTests();
+            runAllTests();
           }, 100);
         }
       }
     );
     return () => unsubscribe();
-  }, [runTests]);
+  }, [runAllTests]);
 
   const handleTestNow = useCallback(() => {
-    runTests();
-  }, [runTests]);
+    runAllTests();
+  }, [runAllTests]);
 
   // Listen for tray menu events
   useEffect(() => {
@@ -216,7 +302,7 @@ function AppContent() {
     };
 
     const handleTrayTest = () => {
-      runTests();
+      runAllTests();
     };
 
     const handleTraySettings = () => {
@@ -232,7 +318,7 @@ function AppContent() {
       window.removeEventListener('tray-test', handleTrayTest);
       window.removeEventListener('tray-settings', handleTraySettings);
     };
-  }, [setPaused, runTests, setCurrentView]);
+  }, [setPaused, runAllTests, setCurrentView]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
