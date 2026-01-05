@@ -166,7 +166,7 @@ Right-click the tray icon for quick actions:
 
 Logs are stored in:
 ```
-%APPDATA%\AVDLatencyChecker\logs\
+%APPDATA%\AVDHealthMonitor\logs\
 ```
 
 Example log file: `avd_latency_2026-01-04.log`
