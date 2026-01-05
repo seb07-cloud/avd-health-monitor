@@ -30,14 +30,14 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^4.6.0",
+    "@vitejs/plugin-react": "^5.1.2",
     "@vitest/ui": "^4.0.16",
     "autoprefixer": "^10",
     "happy-dom": "^20.0.11",
     "jsdom": "^27.4.0",
     "postcss": "^8",
-    "tailwindcss": "^3.4.19",
-    "typescript": "~5.8.3",
+    "tailwindcss": "^4.1.18",
+    "typescript": "~5.9.3",
     "vite": "^7.0.4",
     "vitest": "^4.0.16"
   }
