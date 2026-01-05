@@ -3,7 +3,7 @@ use winreg::enums::*;
 #[cfg(target_os = "windows")]
 use winreg::RegKey;
 
-const APP_NAME: &str = "AVDLatencyChecker";
+const APP_NAME: &str = "AVDHealthMonitor";
 
 #[cfg(target_os = "windows")]
 pub fn enable_autostart(exe_path: &str) -> Result<(), String> {

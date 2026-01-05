@@ -38,7 +38,7 @@ impl Logger {
         {
             let appdata = std::env::var("APPDATA")
                 .map_err(|e| std::io::Error::new(std::io::ErrorKind::NotFound, e))?;
-            Ok(PathBuf::from(appdata).join("AVDLatencyChecker").join("logs"))
+            Ok(PathBuf::from(appdata).join("AVDHealthMonitor").join("logs"))
         }
 
         #[cfg(not(target_os = "windows"))]
