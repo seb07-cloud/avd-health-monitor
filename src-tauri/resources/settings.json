@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "config": {
+    "mode": "sessionhost",
+    "testInterval": 60,
+    "retentionDays": 30,
+    "thresholds": {
+      "excellent": 50,
+      "good": 100,
+      "warning": 150
+    },
+    "notificationsEnabled": true,
+    "autoStart": false,
+    "theme": "system",
+    "alertThreshold": 3,
+    "alertCooldown": 5,
+    "graphTimeRange": 1
+  },
+  "customEndpoints": []
+}

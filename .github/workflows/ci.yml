@@ -1,0 +1,223 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, claude/**]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  test-critical:
+    name: Test Critical Functions
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        shell: pwsh
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $env:GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Test utility functions
+        run: pnpm exec vitest run src/lib/utils.test.ts --reporter=verbose
+
+  # Build on PRs and non-main branches (validation)
+  build-windows:
+    name: Build Windows Application
+    needs: test-critical
+    if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        shell: pwsh
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $env:GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Build application
+        run: pnpm tauri build
+        env:
+          RUSTFLAGS: "-C link-arg=-fuse-ld=lld"
+
+      - name: Upload Windows MSI
+        uses: actions/upload-artifact@v6
+        with:
+          name: windows-msi
+          path: src-tauri/target/release/bundle/msi/*.msi
+
+      - name: Upload Windows EXE
+        uses: actions/upload-artifact@v6
+        with:
+          name: windows-exe
+          path: src-tauri/target/release/avd-health-monitor.exe
+
+  # Release Please only runs on main pushes, after tests pass
+  release-please:
+    name: Release Please
+    needs: test-critical
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: .release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  # Build and upload binaries only when a release is created
+  build-and-upload:
+    name: Build and Upload Release
+    runs-on: windows-latest
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: x86_64-pc-windows-msvc
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Run tests
+        run: |
+          pnpm test:run
+          cd src-tauri
+          cargo test
+
+      - name: Build application
+        run: pnpm tauri build
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
+      - name: Upload release assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ needs.release-please.outputs.tag_name }}"
+
+          echo "=== Uploading assets to release $VERSION ==="
+
+          # Find and upload MSI
+          MSI_FILE=$(find src-tauri/target/release/bundle/msi -name "*.msi" -type f 2>/dev/null | head -1)
+          if [ -n "$MSI_FILE" ]; then
+            echo "Uploading MSI: $MSI_FILE"
+            gh release upload "$VERSION" "$MSI_FILE" --clobber
+          else
+            echo "Warning: MSI file not found"
+          fi
+
+          # Create portable ZIP with EXE and resource files
+          EXE_FILE="src-tauri/target/release/avd-health-monitor.exe"
+          if [ -f "$EXE_FILE" ]; then
+            echo "Creating portable ZIP with EXE and resources..."
+            PORTABLE_DIR="avd-health-monitor-portable"
+            mkdir -p "$PORTABLE_DIR/resources"
+            cp "$EXE_FILE" "$PORTABLE_DIR/"
+            cp src-tauri/resources/*.json "$PORTABLE_DIR/resources/"
+
+            # Create ZIP archive
+            ZIP_FILE="avd-health-monitor-${VERSION}-portable.zip"
+            powershell -Command "Compress-Archive -Path '$PORTABLE_DIR/*' -DestinationPath '$ZIP_FILE' -Force"
+
+            echo "Uploading portable ZIP: $ZIP_FILE"
+            gh release upload "$VERSION" "$ZIP_FILE" --clobber
+
+            # Cleanup
+            rm -rf "$PORTABLE_DIR"
+          else
+            echo "Warning: Portable EXE not found"
+          fi
+
+          # Upload NSIS installer if available
+          NSIS_FILE=$(find src-tauri/target/release/bundle/nsis -name "*.exe" -type f 2>/dev/null | head -1)
+          if [ -n "$NSIS_FILE" ]; then
+            echo "Uploading NSIS: $NSIS_FILE"
+            gh release upload "$VERSION" "$NSIS_FILE" --clobber
+          fi
+
+          echo "=== Upload complete ==="

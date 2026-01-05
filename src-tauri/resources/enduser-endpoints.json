@@ -1,0 +1,147 @@
+{
+  "name": "End User Device",
+  "description": "Endpoints required for Azure Virtual Desktop client devices (Windows, macOS, iOS, Android, Web)",
+  "source": "https://learn.microsoft.com/en-us/azure/virtual-desktop/required-fqdn-endpoint",
+  "categories": [
+    {
+      "name": "Authentication",
+      "description": "Endpoints for user authentication",
+      "endpoints": [
+        {
+          "id": "eu-azure-login",
+          "name": "Azure AD Authentication",
+          "url": "login.microsoftonline.com",
+          "port": 443,
+          "protocol": "tcp",
+          "required": true,
+          "purpose": "Authentication to Microsoft Online Services",
+          "latencyCritical": true,
+          "muted": false
+        }
+      ]
+    },
+    {
+      "name": "AVD Services",
+      "description": "Core Azure Virtual Desktop service endpoints",
+      "endpoints": [
+        {
+          "id": "eu-avd-rdgateway",
+          "name": "AVD RD Gateway",
+          "url": "rdgateway.wvd.microsoft.com",
+          "port": 443,
+          "protocol": "tcp",
+          "required": true,
+          "purpose": "Service traffic including TCP based RDP connectivity",
+          "latencyCritical": true,
+          "muted": false
+        },
+        {
+          "id": "eu-avd-rdweb",
+          "name": "AVD RD Web",
+          "url": "rdweb.wvd.microsoft.com",
+          "port": 443,
+          "protocol": "tcp",
+          "required": true,
+          "purpose": "Service traffic including TCP based RDP connectivity",
+          "latencyCritical": true,
+          "muted": false
+        },
+        {
+          "id": "eu-avd-client",
+          "name": "AVD Client",
+          "url": "client.wvd.microsoft.com",
+          "port": 443,
+          "protocol": "tcp",
+          "required": true,
+          "purpose": "Service traffic including TCP based RDP connectivity",
+          "latencyCritical": true,
+          "muted": false
+        },
+        {
+          "id": "eu-avd-rdbroker",
+          "name": "AVD RD Broker",
+          "url": "rdbroker.wvd.microsoft.com",
+          "port": 443,
+          "protocol": "tcp",
+          "required": true,
+          "purpose": "Service traffic including TCP based RDP connectivity",
+          "latencyCritical": true,
+          "muted": false
+        },
+        {
+          "id": "eu-windows-cloud",
+          "name": "Windows Cloud",
+          "url": "windows.cloud.microsoft",
+          "port": 443,
+          "protocol": "tcp",
+          "required": true,
+          "purpose": "Connection center",
+          "latencyCritical": false,
+          "muted": false
+        }
+      ]
+    },
+    {
+      "name": "Microsoft Services",
+      "description": "Microsoft cloud services required for client operation",
+      "endpoints": [
+        {
+          "id": "eu-graph-api",
+          "name": "Microsoft Graph",
+          "url": "graph.microsoft.com",
+          "port": 443,
+          "protocol": "tcp",
+          "required": true,
+          "purpose": "Service traffic",
+          "latencyCritical": false,
+          "muted": false
+        },
+        {
+          "id": "eu-ecs-office",
+          "name": "Office ECS",
+          "url": "ecs.office.com",
+          "port": 443,
+          "protocol": "tcp",
+          "required": true,
+          "purpose": "Connection center",
+          "latencyCritical": false,
+          "muted": false
+        }
+      ]
+    },
+    {
+      "name": "Certificates",
+      "description": "Endpoints for certificate validation",
+      "endpoints": [
+        {
+          "id": "eu-cert-microsoft",
+          "name": "Microsoft Certificates",
+          "url": "www.microsoft.com",
+          "port": 80,
+          "protocol": "http",
+          "required": true,
+          "purpose": "Certificates",
+          "latencyCritical": false,
+          "muted": false
+        }
+      ]
+    },
+    {
+      "name": "Optional Services",
+      "description": "Optional endpoints for additional functionality",
+      "endpoints": [
+        {
+          "id": "eu-windows365",
+          "name": "Windows 365",
+          "url": "windows365.microsoft.com",
+          "port": 443,
+          "protocol": "tcp",
+          "required": false,
+          "purpose": "Windows 365 Cloud PC service",
+          "latencyCritical": false,
+          "muted": false
+        }
+      ]
+    }
+  ]
+}

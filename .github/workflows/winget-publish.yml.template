@@ -1,0 +1,55 @@
+# Winget Publishing Workflow (Template - Rename to .yml when ready)
+#
+# Prerequisites before enabling:
+# 1. Submit initial winget manifest manually to microsoft/winget-pkgs
+# 2. Create GitHub PAT with 'public_repo' scope
+# 3. Add PAT as repository secret named 'WINGET_TOKEN'
+# 4. Replace 'YourPublisher.AVDLatencyChecker' with your actual winget package ID
+#
+# Once setup is complete:
+# - Rename this file from .yml.template to .yml
+# - This workflow will automatically submit winget package updates on releases
+
+name: Publish to WinGet
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-winget:
+    runs-on: windows-latest
+    # Skip pre-releases (alpha, beta, rc)
+    if: ${{ !github.event.release.prerelease }}
+    steps:
+      - name: Publish to WinGet
+        uses: vedantmgoyal9/winget-releaser@v2
+        with:
+          # Your winget package identifier
+          # Get this after your initial manual submission is approved
+          identifier: YourPublisher.AVDLatencyChecker
+
+          # Only submit the MSI installer (not portable EXE)
+          installers-regex: '\.msi$'
+
+          # GitHub token for creating PRs to winget-pkgs
+          token: ${{ secrets.WINGET_TOKEN }}
+
+          # Optional: Customize fork settings
+          # fork-user: your-github-username
+
+          # Optional: Maximum number of releases to publish
+          # max-versions-to-handle: 1
+
+          # Optional: Delete previous release branches
+          # delete-previous-fork-branch: true
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::warning::WinGet publish failed. Check the logs above for details."
+          echo "Common issues:"
+          echo "  - WINGET_TOKEN secret not set or invalid"
+          echo "  - Package identifier not found in winget-pkgs"
+          echo "  - Installer URL not accessible"
+          echo "  - Manifest validation errors"
