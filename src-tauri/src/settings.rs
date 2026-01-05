@@ -300,7 +300,7 @@ pub fn get_appdata_settings_dir() -> std::io::Result<PathBuf> {
     {
         let appdata = std::env::var("APPDATA")
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::NotFound, e))?;
-        let settings_dir = PathBuf::from(appdata).join("AVDLatencyChecker");
+        let settings_dir = PathBuf::from(appdata).join("AVDHealthMonitor");
         fs::create_dir_all(&settings_dir)?;
         Ok(settings_dir)
     }
@@ -343,17 +343,37 @@ pub fn get_endpoint_file_path(mode: &AppMode) -> std::io::Result<PathBuf> {
 /// Load endpoint file for the given mode
 pub fn load_endpoint_file(app: &tauri::AppHandle, mode: &AppMode) -> std::io::Result<EndpointFile> {
     let path = get_endpoint_file_path(mode)?;
+    let filename = match mode {
+        AppMode::SessionHost => SESSIONHOST_ENDPOINTS_FILENAME,
+        AppMode::EndUser => ENDUSER_ENDPOINTS_FILENAME,
+    };
 
     if !path.exists() {
-        // Copy from resources if not exists
-        if let Ok(resource_path) = app.path().resource_dir() {
-            let filename = match mode {
-                AppMode::SessionHost => SESSIONHOST_ENDPOINTS_FILENAME,
-                AppMode::EndUser => ENDUSER_ENDPOINTS_FILENAME,
-            };
-            let source_path = resource_path.join(filename);
+        // Try multiple paths to find bundled resources
+        let possible_resource_paths: Vec<PathBuf> = {
+            let mut paths = Vec::new();
+
+            if let Ok(resource_path) = app.path().resource_dir() {
+                paths.push(resource_path.clone());
+                paths.push(resource_path.join("resources"));
+            }
+
+            if let Ok(exe_path) = std::env::current_exe() {
+                if let Some(exe_dir) = exe_path.parent() {
+                    paths.push(exe_dir.to_path_buf());
+                    paths.push(exe_dir.join("resources"));
+                }
+            }
+
+            paths
+        };
+
+        for resource_dir in &possible_resource_paths {
+            let source_path = resource_dir.join(filename);
             if source_path.exists() {
-                fs::copy(&source_path, &path)?;
+                if fs::copy(&source_path, &path).is_ok() {
+                    break;
+                }
             }
         }
     }
@@ -514,22 +534,70 @@ pub fn initialize_settings(app: &tauri::AppHandle) -> std::io::Result<()> {
     let settings_path = get_settings_path()?;
     let settings_dir = get_settings_dir()?;
 
+    println!("[Settings] Settings directory: {:?}", settings_dir);
+    println!("[Settings] Settings file path: {:?}", settings_path);
+
     // Create settings.json if it doesn't exist
     if !settings_path.exists() {
+        println!("[Settings] Creating default settings file");
         let settings = SettingsFile::default();
         save_settings(&settings)?;
     }
+
+    // Try multiple paths to find bundled resources
+    let possible_resource_paths: Vec<PathBuf> = {
+        let mut paths = Vec::new();
+
+        // 1. Tauri resource_dir (standard path)
+        if let Ok(resource_path) = app.path().resource_dir() {
+            paths.push(resource_path.clone());
+            // Also try resources subfolder
+            paths.push(resource_path.join("resources"));
+        }
+
+        // 2. Exe directory (for MSI installs, resources are often next to exe)
+        if let Ok(exe_path) = std::env::current_exe() {
+            if let Some(exe_dir) = exe_path.parent() {
+                paths.push(exe_dir.to_path_buf());
+                paths.push(exe_dir.join("resources"));
+            }
+        }
+
+        paths
+    };
+
+    println!("[Settings] Searching for resources in: {:?}", possible_resource_paths);
 
     // Copy endpoint files to settings directory if they don't exist
     for filename in [SESSIONHOST_ENDPOINTS_FILENAME, ENDUSER_ENDPOINTS_FILENAME] {
         let target_path = settings_dir.join(filename);
         if !target_path.exists() {
-            if let Ok(resource_path) = app.path().resource_dir() {
-                let source_path = resource_path.join(filename);
+            println!("[Settings] Looking for resource file: {}", filename);
+
+            let mut copied = false;
+            for resource_dir in &possible_resource_paths {
+                let source_path = resource_dir.join(filename);
+                println!("[Settings] Checking: {:?}", source_path);
+
                 if source_path.exists() {
-                    let _ = fs::copy(&source_path, &target_path);
+                    match fs::copy(&source_path, &target_path) {
+                        Ok(_) => {
+                            println!("[Settings] Successfully copied {} to {:?}", filename, target_path);
+                            copied = true;
+                            break;
+                        }
+                        Err(e) => {
+                            eprintln!("[Settings] Failed to copy {}: {}", filename, e);
+                        }
+                    }
                 }
             }
+
+            if !copied {
+                eprintln!("[Settings] WARNING: Could not find resource file: {}", filename);
+            }
+        } else {
+            println!("[Settings] File already exists: {:?}", target_path);
         }
     }
 

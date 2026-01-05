@@ -320,7 +320,7 @@ dependencies = [
 
 [[package]]
 name = "avd-health-monitor"
-version = "0.2.4"
+version = "0.2.0"
 dependencies = [
  "chrono",
  "image",
