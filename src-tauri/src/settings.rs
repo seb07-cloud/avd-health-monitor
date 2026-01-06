@@ -151,6 +151,14 @@ pub struct AppConfig {
     pub alert_cooldown: u32,
     #[serde(default = "default_graph_time_range")]
     pub graph_time_range: u32,
+    #[serde(default = "default_true")]
+    pub fslogix_enabled: bool,
+    #[serde(default = "default_fslogix_test_interval")]
+    pub fslogix_test_interval: u32,
+    #[serde(default = "default_alert_threshold")]
+    pub fslogix_alert_threshold: u32,
+    #[serde(default = "default_alert_cooldown")]
+    pub fslogix_alert_cooldown: u32,
 }
 
 fn default_mode() -> AppMode {
@@ -181,6 +189,10 @@ fn default_graph_time_range() -> u32 {
     1
 }
 
+fn default_fslogix_test_interval() -> u32 {
+    60
+}
+
 impl Default for AppConfig {
     fn default() -> Self {
         Self {
@@ -194,6 +206,10 @@ impl Default for AppConfig {
             alert_threshold: 3,
             alert_cooldown: 5,
             graph_time_range: 1,
+            fslogix_enabled: true,
+            fslogix_test_interval: 60,
+            fslogix_alert_threshold: 3,
+            fslogix_alert_cooldown: 5,
         }
     }
 }
@@ -221,6 +237,17 @@ fn default_custom_category() -> Option<String> {
     Some("Custom".to_string())
 }
 
+/// FSLogix path state (muted status) stored in settings.json
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FSLogixPathState {
+    /// The path ID (e.g., "fslogix-profile-0")
+    pub id: String,
+    /// If true, alerts are suppressed for this path
+    #[serde(default)]
+    pub muted: bool,
+}
+
 /// Settings file structure - contains config only, endpoints are in separate files
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -232,6 +259,9 @@ pub struct SettingsFile {
     /// Custom endpoints added by the user
     #[serde(default)]
     pub custom_endpoints: Vec<CustomEndpoint>,
+    /// FSLogix path muted states
+    #[serde(default)]
+    pub fslogix_path_states: Vec<FSLogixPathState>,
 }
 
 fn default_version() -> u32 {
@@ -244,6 +274,7 @@ impl Default for SettingsFile {
             version: 1,
             config: AppConfig::default(),
             custom_endpoints: Vec::new(),
+            fslogix_path_states: Vec::new(),
         }
     }
 }

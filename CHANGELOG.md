@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.2.2...avd-health-monitor-v0.3.0) (2026-01-05)
+
+
+### Features
+
+* add FSLogix monitoring and alerting functionality ([74e30f8](https://github.com/seb07-cloud/avd-health-monitor/commit/74e30f88743939b29e15991596abd510e3196b28))
+* add FSLogix monitoring and alerting functionality ([4144eda](https://github.com/seb07-cloud/avd-health-monitor/commit/4144edaa92db914e6c33b5ad52d28dd342eecfa4))
+
 ## [0.2.2](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.2.1...avd-health-monitor-v0.2.2) (2026-01-05)
 
 
