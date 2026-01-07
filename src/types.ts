@@ -56,7 +56,7 @@ export interface AppConfig {
   thresholds: LatencyThresholds;
   notificationsEnabled: boolean;
   autoStart: boolean;
-  theme: 'light' | 'dark' | 'system';
+  theme: 'light' | 'dark' | 'nord' | 'cyberpunk' | 'system';
   alertThreshold: number; // Number of consecutive high latency checks before showing notification
   alertCooldown: number; // Minutes between repeated alerts (default: 5)
   graphTimeRange: number; // Hours of history to show in graph (default: 1)

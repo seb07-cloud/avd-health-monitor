@@ -35,10 +35,10 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Toolti
     });
 
     return (
-      <div className="bg-gray-900 dark:bg-gray-800 text-white px-3 py-2 rounded-lg shadow-lg border border-gray-700 text-xs">
-        <p className="font-semibold text-blue-400">{data.latency.toFixed(1)} ms</p>
-        <p className="text-gray-300">{formattedDate}</p>
-        <p className="text-gray-400">{formattedTime}</p>
+      <div className="bg-gray-900 dark:bg-gray-800 text-white px-3 py-2 rounded-lg shadow-lg border border-gray-700 dark:border-gray-600 text-xs">
+        <p className="font-semibold text-blue-400 dark:text-blue-300">{data.latency.toFixed(1)} ms</p>
+        <p className="text-gray-300 dark:text-gray-200">{formattedDate}</p>
+        <p className="text-gray-400 dark:text-gray-300">{formattedTime}</p>
       </div>
     );
   }

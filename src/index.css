@@ -2,6 +2,322 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme-aware CSS variables */
+:root {
+  --color-disabled-stroke: #9ca3af; /* gray-400 for light mode */
+}
+
+.dark {
+  --color-disabled-stroke: #d1d5db; /* gray-300 for dark mode - more visible */
+}
+
+/* ============================================
+   True Dark Mode Overrides (AMOLED-like)
+   ============================================ */
+/* Make regular dark mode truly dark with pure blacks */
+.dark:not([data-theme]) .dark\:bg-gray-900,
+.dark:not([data-theme]) .bg-gray-900 { background-color: #000000 !important; }
+.dark:not([data-theme]) .dark\:bg-gray-800,
+.dark:not([data-theme]) .bg-gray-800 { background-color: #0a0a0a !important; }
+.dark:not([data-theme]) .dark\:bg-gray-700,
+.dark:not([data-theme]) .bg-gray-700 { background-color: #121212 !important; }
+.dark:not([data-theme]) .dark\:bg-gray-700\/50 { background-color: rgba(18, 18, 18, 0.5) !important; }
+.dark:not([data-theme]) .dark\:bg-gray-600,
+.dark:not([data-theme]) .bg-gray-600 { background-color: #1a1a1a !important; }
+.dark:not([data-theme]) .dark\:from-gray-900 { --tw-gradient-from: #000000 !important; }
+.dark:not([data-theme]) .dark\:to-gray-800 { --tw-gradient-to: #0a0a0a !important; }
+
+/* Border colors for true dark mode */
+.dark:not([data-theme]) .dark\:border-gray-700 { border-color: #1f1f1f !important; }
+.dark:not([data-theme]) .dark\:border-gray-600 { border-color: #2a2a2a !important; }
+.dark:not([data-theme]) .dark\:border-gray-500 { border-color: #3a3a3a !important; }
+
+/* Card backgrounds in true dark mode */
+.dark:not([data-theme]) .bg-white { background-color: #0a0a0a !important; }
+
+/* Nord Theme Color Overrides */
+/* When data-theme="nord" is set, override the default dark mode colors with Nord palette */
+[data-theme="nord"] {
+  /* Polar Night - Background colors (replacing Tailwind grays in dark mode) */
+  --nord-polar-night-0: #2e3440;
+  --nord-polar-night-1: #3b4252;
+  --nord-polar-night-2: #434c5e;
+  --nord-polar-night-3: #4c566a;
+
+  /* Snow Storm - Text/Light colors */
+  --nord-snow-storm-0: #d8dee9;
+  --nord-snow-storm-1: #e5e9f0;
+  --nord-snow-storm-2: #eceff4;
+
+  /* Frost - Accent/Primary colors */
+  --nord-frost-0: #8fbcbb;
+  --nord-frost-1: #88c0d0;
+  --nord-frost-2: #81a1c1;
+  --nord-frost-3: #5e81ac;
+
+  /* Aurora - Status colors */
+  --nord-aurora-red: #bf616a;
+  --nord-aurora-orange: #d08770;
+  --nord-aurora-yellow: #ebcb8b;
+  --nord-aurora-green: #a3be8c;
+  --nord-aurora-purple: #b48ead;
+}
+
+/* Override Tailwind dark mode colors for Nord theme */
+[data-theme="nord"].dark {
+  /* Background overrides */
+  --tw-bg-opacity: 1;
+  /* Disabled stroke color for Nord - use Snow Storm palette */
+  --color-disabled-stroke: #d8dee9;
+}
+
+/* Gray color overrides for Nord */
+[data-theme="nord"] .dark\:bg-gray-900 { background-color: #2e3440 !important; }
+[data-theme="nord"] .dark\:bg-gray-800 { background-color: #3b4252 !important; }
+[data-theme="nord"] .dark\:bg-gray-700 { background-color: #434c5e !important; }
+[data-theme="nord"] .dark\:bg-gray-700\/50 { background-color: rgba(67, 76, 94, 0.5) !important; }
+[data-theme="nord"] .dark\:bg-gray-600 { background-color: #4c566a !important; }
+[data-theme="nord"] .dark\:from-gray-900 { --tw-gradient-from: #2e3440 !important; }
+[data-theme="nord"] .dark\:to-gray-800 { --tw-gradient-to: #3b4252 !important; }
+
+/* Text color overrides for Nord */
+[data-theme="nord"] .dark\:text-white { color: #eceff4 !important; }
+[data-theme="nord"] .dark\:text-gray-100 { color: #eceff4 !important; }
+[data-theme="nord"] .dark\:text-gray-200 { color: #e5e9f0 !important; }
+[data-theme="nord"] .dark\:text-gray-300 { color: #d8dee9 !important; }
+[data-theme="nord"] .dark\:text-gray-400 { color: #d8dee9 !important; }
+[data-theme="nord"] .dark\:text-gray-500 { color: #4c566a !important; }
+
+/* Border color overrides for Nord */
+[data-theme="nord"] .dark\:border-gray-700 { border-color: #434c5e !important; }
+[data-theme="nord"] .dark\:border-gray-600 { border-color: #4c566a !important; }
+[data-theme="nord"] .dark\:border-gray-500 { border-color: #4c566a !important; }
+
+/* Primary/accent color overrides for Nord (Frost palette) */
+[data-theme="nord"] .bg-primary-500 { background-color: #88c0d0 !important; }
+[data-theme="nord"] .bg-primary-600,
+[data-theme="nord"] .hover\:bg-primary-600:hover { background-color: #81a1c1 !important; }
+[data-theme="nord"] .text-primary-500 { color: #88c0d0 !important; }
+[data-theme="nord"] .dark\:text-primary-500 { color: #88c0d0 !important; }
+[data-theme="nord"] .focus\:ring-primary-500:focus { --tw-ring-color: #88c0d0 !important; }
+
+/* Blue color overrides for Nord */
+[data-theme="nord"] .bg-blue-500 { background-color: #5e81ac !important; }
+[data-theme="nord"] .hover\:bg-blue-600:hover { background-color: #81a1c1 !important; }
+[data-theme="nord"] .bg-blue-400 { background-color: #81a1c1 !important; }
+[data-theme="nord"] .text-blue-500 { color: #88c0d0 !important; }
+[data-theme="nord"] .dark\:text-blue-400 { color: #88c0d0 !important; }
+[data-theme="nord"] .dark\:text-blue-300 { color: #8fbcbb !important; }
+[data-theme="nord"] .dark\:bg-blue-900\/20 { background-color: rgba(94, 129, 172, 0.2) !important; }
+[data-theme="nord"] .border-blue-500 { border-color: #5e81ac !important; }
+[data-theme="nord"] .bg-blue-50 { background-color: rgba(94, 129, 172, 0.1) !important; }
+[data-theme="nord"] .text-blue-700 { color: #5e81ac !important; }
+
+/* Status color overrides for Nord (Aurora palette) */
+/* Green */
+[data-theme="nord"] .bg-green-500 { background-color: #a3be8c !important; }
+[data-theme="nord"] .hover\:bg-green-600:hover { background-color: #8fbcbb !important; }
+[data-theme="nord"] .text-green-500 { color: #a3be8c !important; }
+[data-theme="nord"] .text-green-600 { color: #a3be8c !important; }
+[data-theme="nord"] .dark\:text-green-400 { color: #a3be8c !important; }
+[data-theme="nord"] .bg-green-50 { background-color: rgba(163, 190, 140, 0.1) !important; }
+[data-theme="nord"] .dark\:bg-green-900\/20 { background-color: rgba(163, 190, 140, 0.2) !important; }
+[data-theme="nord"] .text-green-700 { color: #a3be8c !important; }
+[data-theme="nord"] .border-green-500 { border-color: #a3be8c !important; }
+
+/* Yellow */
+[data-theme="nord"] .bg-yellow-500 { background-color: #ebcb8b !important; }
+[data-theme="nord"] .hover\:bg-yellow-600:hover { background-color: #d08770 !important; }
+[data-theme="nord"] .text-yellow-500 { color: #ebcb8b !important; }
+[data-theme="nord"] .text-yellow-600 { color: #ebcb8b !important; }
+[data-theme="nord"] .dark\:text-yellow-400 { color: #ebcb8b !important; }
+[data-theme="nord"] .bg-yellow-50 { background-color: rgba(235, 203, 139, 0.1) !important; }
+[data-theme="nord"] .dark\:bg-yellow-900\/20 { background-color: rgba(235, 203, 139, 0.2) !important; }
+[data-theme="nord"] .dark\:bg-yellow-900\/30 { background-color: rgba(235, 203, 139, 0.3) !important; }
+
+/* Orange */
+[data-theme="nord"] .bg-orange-500 { background-color: #d08770 !important; }
+[data-theme="nord"] .text-orange-500 { color: #d08770 !important; }
+[data-theme="nord"] .text-orange-600 { color: #d08770 !important; }
+[data-theme="nord"] .dark\:text-orange-400 { color: #d08770 !important; }
+
+/* Red */
+[data-theme="nord"] .bg-red-500 { background-color: #bf616a !important; }
+[data-theme="nord"] .text-red-500 { color: #bf616a !important; }
+[data-theme="nord"] .text-red-600 { color: #bf616a !important; }
+[data-theme="nord"] .dark\:text-red-400 { color: #bf616a !important; }
+[data-theme="nord"] .bg-red-50 { background-color: rgba(191, 97, 106, 0.1) !important; }
+[data-theme="nord"] .dark\:bg-red-900\/20 { background-color: rgba(191, 97, 106, 0.2) !important; }
+[data-theme="nord"] .text-red-700 { color: #bf616a !important; }
+[data-theme="nord"] .border-red-200 { border-color: rgba(191, 97, 106, 0.3) !important; }
+[data-theme="nord"] .dark\:border-red-800 { border-color: rgba(191, 97, 106, 0.4) !important; }
+
+/* Purple */
+[data-theme="nord"] .bg-purple-500 { background-color: #b48ead !important; }
+[data-theme="nord"] .text-purple-600 { color: #b48ead !important; }
+[data-theme="nord"] .dark\:text-purple-400 { color: #b48ead !important; }
+[data-theme="nord"] .dark\:text-purple-300 { color: #b48ead !important; }
+[data-theme="nord"] .bg-purple-100 { background-color: rgba(180, 142, 173, 0.1) !important; }
+[data-theme="nord"] .dark\:bg-purple-900\/30 { background-color: rgba(180, 142, 173, 0.3) !important; }
+[data-theme="nord"] .text-purple-700 { color: #b48ead !important; }
+[data-theme="nord"] .focus\:ring-purple-500:focus { --tw-ring-color: #b48ead !important; }
+
+/* Scrollbar colors for Nord */
+[data-theme="nord"] ::-webkit-scrollbar-thumb {
+  background-color: #4c566a;
+}
+[data-theme="nord"] ::-webkit-scrollbar-thumb:hover {
+  background-color: #434c5e;
+}
+
+/* ============================================
+   Cyberpunk Theme Color Overrides
+   ============================================ */
+/* When data-theme="cyberpunk" is set, override colors with intense neon cyberpunk palette */
+[data-theme="cyberpunk"] {
+  /* Pure black backgrounds for maximum neon contrast */
+  --cyber-bg-darkest: #000000;
+  --cyber-bg-dark: #050508;
+  --cyber-bg-medium: #0a0a10;
+  --cyber-bg-light: #101018;
+
+  /* Intense neon accent colors */
+  --cyber-neon-pink: #ff0055;
+  --cyber-neon-cyan: #00ffff;
+  --cyber-neon-purple: #bf00ff;
+  --cyber-neon-green: #00ff00;
+
+  /* Text colors */
+  --cyber-text-bright: #ffffff;
+  --cyber-text-muted: #c0c0c0;
+  --cyber-text-dim: #606080;
+}
+
+/* Override Tailwind dark mode colors for Cyberpunk theme */
+[data-theme="cyberpunk"].dark {
+  --tw-bg-opacity: 1;
+  /* Disabled stroke color for Cyberpunk */
+  --color-disabled-stroke: #606080;
+}
+
+/* Gray/Background color overrides for Cyberpunk - pure blacks */
+[data-theme="cyberpunk"] .dark\:bg-gray-900 { background-color: #000000 !important; }
+[data-theme="cyberpunk"] .dark\:bg-gray-800 { background-color: #050508 !important; }
+[data-theme="cyberpunk"] .dark\:bg-gray-700 { background-color: #0a0a10 !important; }
+[data-theme="cyberpunk"] .dark\:bg-gray-700\/50 { background-color: rgba(10, 10, 16, 0.5) !important; }
+[data-theme="cyberpunk"] .dark\:bg-gray-600 { background-color: #101018 !important; }
+[data-theme="cyberpunk"] .dark\:from-gray-900 { --tw-gradient-from: #000000 !important; }
+[data-theme="cyberpunk"] .dark\:to-gray-800 { --tw-gradient-to: #050508 !important; }
+[data-theme="cyberpunk"] .bg-white { background-color: #050508 !important; }
+
+/* Text color overrides for Cyberpunk */
+[data-theme="cyberpunk"] .dark\:text-white { color: #ffffff !important; }
+[data-theme="cyberpunk"] .dark\:text-gray-100 { color: #ffffff !important; }
+[data-theme="cyberpunk"] .dark\:text-gray-200 { color: #e0e0e8 !important; }
+[data-theme="cyberpunk"] .dark\:text-gray-300 { color: #c0c0c8 !important; }
+[data-theme="cyberpunk"] .dark\:text-gray-400 { color: #8080a0 !important; }
+[data-theme="cyberpunk"] .dark\:text-gray-500 { color: #606080 !important; }
+[data-theme="cyberpunk"] .text-gray-900 { color: #ffffff !important; }
+
+/* Border color overrides for Cyberpunk - subtle neon tint */
+[data-theme="cyberpunk"] .dark\:border-gray-700 { border-color: #1a1a28 !important; }
+[data-theme="cyberpunk"] .dark\:border-gray-600 { border-color: #252538 !important; }
+[data-theme="cyberpunk"] .dark\:border-gray-500 { border-color: #353548 !important; }
+[data-theme="cyberpunk"] .border-gray-200 { border-color: #1a1a28 !important; }
+[data-theme="cyberpunk"] .border-gray-300 { border-color: #252538 !important; }
+
+/* Primary/accent color overrides for Cyberpunk (Electric Cyan) */
+[data-theme="cyberpunk"] .bg-primary-500 { background-color: #00ffff !important; }
+[data-theme="cyberpunk"] .bg-primary-600,
+[data-theme="cyberpunk"] .hover\:bg-primary-600:hover { background-color: #00cccc !important; }
+[data-theme="cyberpunk"] .text-primary-500 { color: #00ffff !important; }
+[data-theme="cyberpunk"] .dark\:text-primary-500 { color: #00ffff !important; }
+[data-theme="cyberpunk"] .focus\:ring-primary-500:focus { --tw-ring-color: #00ffff !important; }
+
+/* Blue color overrides for Cyberpunk (Electric Cyan) */
+[data-theme="cyberpunk"] .bg-blue-500 { background-color: #00ffff !important; }
+[data-theme="cyberpunk"] .hover\:bg-blue-600:hover { background-color: #00cccc !important; }
+[data-theme="cyberpunk"] .bg-blue-400 { background-color: #40ffff !important; }
+[data-theme="cyberpunk"] .text-blue-500 { color: #00ffff !important; }
+[data-theme="cyberpunk"] .dark\:text-blue-400 { color: #00ffff !important; }
+[data-theme="cyberpunk"] .dark\:text-blue-300 { color: #60ffff !important; }
+[data-theme="cyberpunk"] .dark\:bg-blue-900\/20 { background-color: rgba(0, 255, 255, 0.1) !important; }
+[data-theme="cyberpunk"] .border-blue-500 { border-color: #00ffff !important; }
+[data-theme="cyberpunk"] .bg-blue-50 { background-color: rgba(0, 255, 255, 0.08) !important; }
+[data-theme="cyberpunk"] .text-blue-700 { color: #00ffff !important; }
+
+/* Status color overrides for Cyberpunk (Maximum neon intensity) */
+/* Green - Electric Neon Green */
+[data-theme="cyberpunk"] .bg-green-500 { background-color: #00ff00 !important; }
+[data-theme="cyberpunk"] .hover\:bg-green-600:hover { background-color: #00cc00 !important; }
+[data-theme="cyberpunk"] .text-green-500 { color: #00ff00 !important; }
+[data-theme="cyberpunk"] .text-green-600 { color: #00ff00 !important; }
+[data-theme="cyberpunk"] .dark\:text-green-400 { color: #00ff00 !important; }
+[data-theme="cyberpunk"] .bg-green-50 { background-color: rgba(0, 255, 0, 0.08) !important; }
+[data-theme="cyberpunk"] .dark\:bg-green-900\/20 { background-color: rgba(0, 255, 0, 0.1) !important; }
+[data-theme="cyberpunk"] .dark\:bg-green-900\/30 { background-color: rgba(0, 255, 0, 0.15) !important; }
+[data-theme="cyberpunk"] .text-green-700 { color: #00ff00 !important; }
+[data-theme="cyberpunk"] .border-green-500 { border-color: #00ff00 !important; }
+[data-theme="cyberpunk"] .bg-green-100 { background-color: rgba(0, 255, 0, 0.08) !important; }
+[data-theme="cyberpunk"] .text-green-800 { color: #00ff00 !important; }
+[data-theme="cyberpunk"] .border-green-300 { border-color: rgba(0, 255, 0, 0.3) !important; }
+
+/* Yellow - Electric Yellow */
+[data-theme="cyberpunk"] .bg-yellow-500 { background-color: #ffff00 !important; }
+[data-theme="cyberpunk"] .hover\:bg-yellow-600:hover { background-color: #cccc00 !important; }
+[data-theme="cyberpunk"] .text-yellow-500 { color: #ffff00 !important; }
+[data-theme="cyberpunk"] .text-yellow-600 { color: #ffff00 !important; }
+[data-theme="cyberpunk"] .dark\:text-yellow-400 { color: #ffff00 !important; }
+[data-theme="cyberpunk"] .bg-yellow-50 { background-color: rgba(255, 255, 0, 0.08) !important; }
+[data-theme="cyberpunk"] .dark\:bg-yellow-900\/20 { background-color: rgba(255, 255, 0, 0.1) !important; }
+[data-theme="cyberpunk"] .dark\:bg-yellow-900\/30 { background-color: rgba(255, 255, 0, 0.15) !important; }
+[data-theme="cyberpunk"] .bg-yellow-100 { background-color: rgba(255, 255, 0, 0.08) !important; }
+[data-theme="cyberpunk"] .text-yellow-800 { color: #ffff00 !important; }
+[data-theme="cyberpunk"] .border-yellow-300 { border-color: rgba(255, 255, 0, 0.3) !important; }
+
+/* Orange - Neon Orange */
+[data-theme="cyberpunk"] .bg-orange-500 { background-color: #ff6600 !important; }
+[data-theme="cyberpunk"] .text-orange-500 { color: #ff6600 !important; }
+[data-theme="cyberpunk"] .text-orange-600 { color: #ff6600 !important; }
+[data-theme="cyberpunk"] .dark\:text-orange-400 { color: #ff6600 !important; }
+[data-theme="cyberpunk"] .bg-orange-100 { background-color: rgba(255, 102, 0, 0.08) !important; }
+[data-theme="cyberpunk"] .text-orange-800 { color: #ff6600 !important; }
+[data-theme="cyberpunk"] .border-orange-300 { border-color: rgba(255, 102, 0, 0.3) !important; }
+
+/* Red - Hot Pink/Magenta */
+[data-theme="cyberpunk"] .bg-red-500 { background-color: #ff0055 !important; }
+[data-theme="cyberpunk"] .text-red-500 { color: #ff0055 !important; }
+[data-theme="cyberpunk"] .text-red-600 { color: #ff0055 !important; }
+[data-theme="cyberpunk"] .dark\:text-red-400 { color: #ff0055 !important; }
+[data-theme="cyberpunk"] .dark\:text-red-500 { color: #ff0055 !important; }
+[data-theme="cyberpunk"] .dark\:text-red-300 { color: #ff4488 !important; }
+[data-theme="cyberpunk"] .bg-red-50 { background-color: rgba(255, 0, 85, 0.08) !important; }
+[data-theme="cyberpunk"] .dark\:bg-red-900\/20 { background-color: rgba(255, 0, 85, 0.1) !important; }
+[data-theme="cyberpunk"] .text-red-700 { color: #ff0055 !important; }
+[data-theme="cyberpunk"] .border-red-200 { border-color: rgba(255, 0, 85, 0.3) !important; }
+[data-theme="cyberpunk"] .dark\:border-red-800 { border-color: rgba(255, 0, 85, 0.4) !important; }
+[data-theme="cyberpunk"] .bg-red-100 { background-color: rgba(255, 0, 85, 0.08) !important; }
+[data-theme="cyberpunk"] .text-red-800 { color: #ff0055 !important; }
+[data-theme="cyberpunk"] .border-red-300 { border-color: rgba(255, 0, 85, 0.3) !important; }
+
+/* Purple - Electric Purple */
+[data-theme="cyberpunk"] .bg-purple-500 { background-color: #bf00ff !important; }
+[data-theme="cyberpunk"] .text-purple-600 { color: #bf00ff !important; }
+[data-theme="cyberpunk"] .dark\:text-purple-400 { color: #bf00ff !important; }
+[data-theme="cyberpunk"] .dark\:text-purple-300 { color: #d060ff !important; }
+[data-theme="cyberpunk"] .bg-purple-100 { background-color: rgba(191, 0, 255, 0.08) !important; }
+[data-theme="cyberpunk"] .dark\:bg-purple-900\/30 { background-color: rgba(191, 0, 255, 0.15) !important; }
+[data-theme="cyberpunk"] .text-purple-700 { color: #bf00ff !important; }
+[data-theme="cyberpunk"] .focus\:ring-purple-500:focus { --tw-ring-color: #bf00ff !important; }
+
+/* Scrollbar colors for Cyberpunk */
+[data-theme="cyberpunk"] ::-webkit-scrollbar-thumb {
+  background-color: #252538;
+}
+[data-theme="cyberpunk"] ::-webkit-scrollbar-thumb:hover {
+  background-color: #00ffff;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

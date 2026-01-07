@@ -379,7 +379,7 @@ export function SettingsPanel() {
                   value={config.theme}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (value === 'light' || value === 'dark' || value === 'system') {
+                    if (value === 'light' || value === 'dark' || value === 'nord' || value === 'cyberpunk' || value === 'system') {
                       setConfig({ theme: value satisfies AppConfig['theme'] });
                     }
                   }}
@@ -387,6 +387,8 @@ export function SettingsPanel() {
                 >
                   <option value="light">Light</option>
                   <option value="dark">Dark</option>
+                  <option value="nord">Nord Dark</option>
+                  <option value="cyberpunk">Cyberpunk</option>
                   <option value="system">System</option>
                 </select>
               </div>

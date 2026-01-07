@@ -30,7 +30,7 @@ function AppContent() {
     setAllFSLogixLoading,
   } = useAppStore();
 
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark' | 'nord' | 'cyberpunk'>('dark');
   const [isTesting, setIsTesting] = useState(false);
   const [appVersion, setAppVersion] = useState<string>('');
 
@@ -88,7 +88,18 @@ function AppContent() {
   }, [config.theme]);
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
+    // Apply dark class for dark-based themes
+    const isDarkMode = theme === 'dark' || theme === 'nord' || theme === 'cyberpunk';
+    document.documentElement.classList.toggle('dark', isDarkMode);
+
+    // Apply data-theme attribute for custom themes
+    if (theme === 'nord') {
+      document.documentElement.setAttribute('data-theme', 'nord');
+    } else if (theme === 'cyberpunk') {
+      document.documentElement.setAttribute('data-theme', 'cyberpunk');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
   }, [theme]);
 
   // Start monitoring on component mount

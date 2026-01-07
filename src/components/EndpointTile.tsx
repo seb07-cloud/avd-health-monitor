@@ -117,7 +117,7 @@ function MiniGraph({ history, isEnabled, latencyStatus }: { history: Array<{ tim
           }}
         >
           <span className="font-medium">{hoveredPoint.latency.toFixed(0)} ms</span>
-          <span className="text-gray-400 ml-1.5">{formatTooltipTime(hoveredPoint.timestamp)}</span>
+          <span className="text-gray-400 dark:text-gray-300 ml-1.5">{formatTooltipTime(hoveredPoint.timestamp)}</span>
         </div>
       )}
       <svg
@@ -134,7 +134,7 @@ function MiniGraph({ history, isEnabled, latencyStatus }: { history: Array<{ tim
         <path
           d={graphData.linePath}
           fill="none"
-          stroke={isEnabled ? getLatencyColor(latencyStatus) : "#9ca3af"}
+          stroke={isEnabled ? getLatencyColor(latencyStatus) : "var(--color-disabled-stroke)"}
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -146,7 +146,7 @@ function MiniGraph({ history, isEnabled, latencyStatus }: { history: Array<{ tim
             cx={hoveredPoint.x}
             cy={hoveredPoint.y}
             r="3"
-            fill={isEnabled ? getLatencyColor(latencyStatus) : "#6b7280"}
+            fill={isEnabled ? getLatencyColor(latencyStatus) : "var(--color-disabled-stroke)"}
           />
         )}
       </svg>
