@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.3.0...avd-health-monitor-v0.4.0) (2026-01-07)
+
+
+### Features
+
+* add MIT License file ([4df8f70](https://github.com/seb07-cloud/avd-health-monitor/commit/4df8f70bc6278d24978873dc357ba9dd6c75ef5f))
+* update theme options and add Nord/Cyberpunk themes; enhance dark mode styles ([b1b0481](https://github.com/seb07-cloud/avd-health-monitor/commit/b1b0481898cc44a699e15e7d1ae541fb50f56ab8))
+
 ## [0.3.0](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.2.2...avd-health-monitor-v0.3.0) (2026-01-05)
 
 
