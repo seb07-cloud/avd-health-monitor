@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.4.0...avd-health-monitor-v0.5.0) (2026-01-08)
+
+
+### Features
+
+* add publisher information and signing command for Windows bundle ([079e8d3](https://github.com/seb07-cloud/avd-health-monitor/commit/079e8d372d2f1c870c69743edcbfb2f16ed6c4e5))
+
 ## [0.4.0](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.3.0...avd-health-monitor-v0.4.0) (2026-01-07)
 
 
