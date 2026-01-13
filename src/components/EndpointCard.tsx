@@ -1,13 +1,8 @@
 import { Activity, TrendingUp, TrendingDown, Minus, Check, AlertTriangle, XCircle, Loader2, WifiOff, Power, CheckCircle } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis, Tooltip } from 'recharts';
 import type { Endpoint, EndpointStatus } from '../types';
-import { cn, formatLatency, getStatusColor, getStatusBgColor, getStatusLabel, formatTimestamp } from '../lib/utils';
+import { cn, formatLatency, getStatusColor, getStatusBgColor, getStatusLabel, formatTimestamp, isLatencyCritical } from '../lib/utils';
 import { useAppStore } from '../store/useAppStore';
-
-// Check if endpoint is latency critical (defaults to true for backwards compatibility)
-function isLatencyCritical(endpoint: Endpoint): boolean {
-  return endpoint.latencyCritical !== false;
-}
 
 // Custom tooltip for chart data points
 interface TooltipPayload {

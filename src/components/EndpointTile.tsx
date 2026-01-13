@@ -1,17 +1,12 @@
 import { Check, AlertTriangle, XCircle, Loader2, WifiOff, Power, CheckCircle, BellOff, Bell } from 'lucide-react';
 import type { Endpoint, EndpointStatus } from '../types';
-import { cn, getStatusColor, getStatusBgColor } from '../lib/utils';
+import { cn, getStatusColor, getStatusBgColor, isLatencyCritical } from '../lib/utils';
 import { useAppStore } from '../store/useAppStore';
 import { useMemo, useState, useCallback } from 'react';
 
 interface EndpointTileProps {
   endpoint: Endpoint;
   status?: EndpointStatus;
-}
-
-// Check if endpoint is latency critical (defaults to true for backwards compatibility)
-function isLatencyCritical(endpoint: Endpoint): boolean {
-  return endpoint.latencyCritical !== false;
 }
 
 // Format timestamp for tooltip

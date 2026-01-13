@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import type { LatencyStatus, LatencyThresholds } from '../types';
+import type { Endpoint, LatencyStatus, LatencyThresholds } from '../types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -63,25 +63,6 @@ export function getStatusLabel(status: LatencyStatus): string {
       return 'CRIT';
     default:
       return '—';
-  }
-}
-
-/**
- * Returns a pattern/icon identifier for the status.
- * Can be used to add visual patterns alongside colors.
- */
-export function getStatusPattern(status: LatencyStatus): string {
-  switch (status) {
-    case 'excellent':
-      return 'checkmark'; // Checkmark pattern
-    case 'good':
-      return 'dash'; // Single dash
-    case 'warning':
-      return 'triangle'; // Warning triangle
-    case 'critical':
-      return 'cross'; // X pattern
-    default:
-      return 'question';
   }
 }
 
@@ -174,4 +155,8 @@ export function formatLatency(latency: number | null): string {
 
 export function formatTimestamp(timestamp: number): string {
   return new Date(timestamp).toLocaleTimeString();
+}
+
+export function isLatencyCritical(endpoint: Endpoint): boolean {
+  return endpoint.latencyCritical !== false;
 }

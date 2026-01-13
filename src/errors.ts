@@ -77,20 +77,6 @@ export class ConnectionError extends NetworkError {
   }
 }
 
-// Validation errors
-export class ValidationError extends AppError {
-  readonly field?: string;
-  readonly value?: unknown;
-
-  constructor(message: string, field?: string, value?: unknown) {
-    super(message, ErrorCode.VALIDATION_ERROR, true);
-    this.name = 'ValidationError';
-    this.field = field;
-    this.value = value;
-    Object.setPrototypeOf(this, ValidationError.prototype);
-  }
-}
-
 // Tauri/Backend errors
 export class TauriError extends AppError {
   readonly command?: string;
@@ -101,20 +87,6 @@ export class TauriError extends AppError {
     this.command = command;
     Object.setPrototypeOf(this, TauriError.prototype);
   }
-}
-
-// Error result type for representing success or failure
-export type Result<T, E = AppError> =
-  | { success: true; data: T }
-  | { success: false; error: E };
-
-// Helper functions to create Result types
-export function ok<T>(data: T): Result<T> {
-  return { success: true, data };
-}
-
-export function err<E = AppError>(error: E): Result<never, E> {
-  return { success: false, error };
 }
 
 // Parse backend error messages into appropriate error types
@@ -187,7 +159,3 @@ export function getUserFriendlyErrorMessage(error: AppError): string {
 export function isAppError(error: unknown): error is AppError {
   return error instanceof AppError;
 }
-
-// Legacy alias for backwards compatibility
-export const AxTrayError = AppError;
-export const isAxTrayError = isAppError;

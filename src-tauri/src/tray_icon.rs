@@ -51,8 +51,8 @@ impl Default for LatencyThresholds {
     }
 }
 
-/// Generate a tray icon with a colored circle and latency text
-pub fn generate_tray_icon(status: IconStatus, _latency: Option<f64>) -> Vec<u8> {
+/// Generate a tray icon with a colored circle
+pub fn generate_tray_icon(status: IconStatus) -> Vec<u8> {
     let size = 64u32;
     let mut img: RgbaImage = ImageBuffer::new(size, size);
 
@@ -80,9 +80,6 @@ pub fn generate_tray_icon(status: IconStatus, _latency: Option<f64>) -> Vec<u8> 
             }
         }
     }
-
-    // Add latency text (simplified - just show the dot for now)
-    // In a production app, you'd use a proper font rendering library like rusttype
 
     // Convert to PNG
     let mut buffer = Vec::new();
@@ -121,7 +118,7 @@ mod tests {
 
     #[test]
     fn test_generate_icon() {
-        let icon_data = generate_tray_icon(IconStatus::Excellent, Some(25.5));
+        let icon_data = generate_tray_icon(IconStatus::Excellent);
         assert!(!icon_data.is_empty());
         // PNG signature check
         assert_eq!(&icon_data[0..8], &[137, 80, 78, 71, 13, 10, 26, 10]);

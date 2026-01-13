@@ -154,33 +154,3 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     }
   }
 }
-
-// Hook-based error boundary wrapper for functional components
-interface ErrorFallbackProps {
-  error: Error;
-  resetError: () => void;
-}
-
-export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
-  return (
-    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-      <div className="flex items-start gap-3">
-        <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-        <div className="flex-1">
-          <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
-            Something went wrong
-          </h3>
-          <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-            {error.message}
-          </p>
-          <button
-            onClick={resetError}
-            className="mt-3 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 underline"
-          >
-            Try again
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}

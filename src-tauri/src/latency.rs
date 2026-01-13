@@ -29,25 +29,6 @@ pub async fn test_tcp_latency(host: &str, port: u16) -> Result<f64, Box<dyn std:
     }
 }
 
-/// Test ICMP ping latency (requires elevated privileges on some systems)
-pub async fn ping_icmp(host: &str) -> Result<f64, Box<dyn std::error::Error>> {
-    use surge_ping::{Client, Config, PingIdentifier, PingSequence};
-
-    let client = Client::new(&Config::default())?;
-    let payload = [0; 56];
-
-    let mut pinger = client.pinger(host.parse()?, PingIdentifier(1)).await;
-
-    match pinger.ping(PingSequence(0), &payload).await {
-        Ok((_, duration)) => Ok(duration.as_secs_f64() * 1000.0),
-        Err(e) => {
-            // Fallback to TCP test if ICMP fails (common on restricted environments)
-            eprintln!("ICMP ping failed ({}), falling back to TCP test", e);
-            test_tcp_latency(host, 443).await
-        }
-    }
-}
-
 /// Test HTTP/HTTPS request latency
 /// Note: We consider any HTTP response (even 4xx/5xx) as a successful connection test,
 /// since we're measuring network latency, not HTTP application status.

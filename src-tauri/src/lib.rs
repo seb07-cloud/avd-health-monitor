@@ -25,11 +25,6 @@ use fslogix::FSLogixPath;
 static TRAY_ICON: Lazy<Arc<Mutex<Option<TrayIcon<tauri::Wry>>>>> = Lazy::new(|| Arc::new(Mutex::new(None)));
 
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[tauri::command]
 async fn test_latency(endpoint: String, port: Option<u16>, protocol: Option<String>) -> Result<f64, String> {
     let port = port.unwrap_or(443);
     let protocol = protocol.unwrap_or_else(|| "tcp".to_string());
@@ -57,13 +52,6 @@ async fn test_latency(endpoint: String, port: Option<u16>, protocol: Option<Stri
 }
 
 #[tauri::command]
-async fn ping_endpoint(endpoint: String) -> Result<f64, String> {
-    latency::ping_icmp(&endpoint)
-        .await
-        .map_err(|e| e.to_string())
-}
-
-#[tauri::command]
 fn update_tray_icon(latency: f64, excellent: f64, good: f64, warning: f64) -> Result<(), String> {
     let thresholds = LatencyThresholds {
         excellent,
@@ -72,7 +60,7 @@ fn update_tray_icon(latency: f64, excellent: f64, good: f64, warning: f64) -> Re
     };
 
     let status = IconStatus::from_latency(latency, &thresholds);
-    let icon_data = generate_tray_icon(status, Some(latency));
+    let icon_data = generate_tray_icon(status);
 
     let icon = Image::from_bytes(&icon_data).map_err(|e| e.to_string())?;
 
@@ -100,31 +88,6 @@ async fn send_notification(
 }
 
 #[tauri::command]
-fn get_avd_region() -> Result<String, String> {
-    // Try to detect AVD region from environment or registry
-    // This is a simplified implementation
-    #[cfg(target_os = "windows")]
-    {
-        // On Windows, check registry for AVD info
-        // For now, return unknown
-        Ok("unknown".to_string())
-    }
-
-    #[cfg(not(target_os = "windows"))]
-    {
-        Ok("unknown".to_string())
-    }
-}
-
-#[tauri::command]
-fn log_latency_data(endpoint: String, latency: f64, status: String, retention_days: u32) -> Result<(), String> {
-    let logger = Logger::new(retention_days).map_err(|e| e.to_string())?;
-    logger.log_latency(&endpoint, latency, &status).map_err(|e| e.to_string())?;
-    logger.cleanup_old_logs().map_err(|e| e.to_string())?;
-    Ok(())
-}
-
-#[tauri::command]
 fn set_autostart(enabled: bool, app_path: String) -> Result<(), String> {
     if enabled {
         autostart::enable_autostart(&app_path)
@@ -148,11 +111,6 @@ fn get_settings_file_path() -> Result<String, String> {
 #[tauri::command]
 fn get_app_version(app: tauri::AppHandle) -> String {
     app.package_info().version.to_string()
-}
-
-#[tauri::command]
-fn read_settings_file() -> Result<SettingsFile, String> {
-    load_settings().map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -323,7 +281,7 @@ fn create_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
     )?;
 
     // Generate initial icon (gray/unknown state)
-    let icon_data = generate_tray_icon(IconStatus::Unknown, None);
+    let icon_data = generate_tray_icon(IconStatus::Unknown);
     let icon = Image::from_bytes(&icon_data)?;
 
     // Create tray icon with a consistent ID so Windows remembers visibility preference
@@ -425,19 +383,14 @@ pub fn run() {
             }
         })
         .invoke_handler(tauri::generate_handler![
-            greet,
             test_latency,
-            ping_endpoint,
             update_tray_icon,
             send_notification,
-            get_avd_region,
-            log_latency_data,
-            get_log_directory,
             set_autostart,
             check_autostart,
             get_settings_file_path,
             get_app_version,
-            read_settings_file,
+            get_log_directory,
             read_settings_with_endpoints,
             read_settings_for_mode,
             write_settings_file,

@@ -2,15 +2,15 @@
   "version": 1,
   "config": {
     "mode": "sessionhost",
-    "testInterval": 60,
+    "testInterval": 180,
     "retentionDays": 30,
     "thresholds": {
       "excellent": 50,
       "good": 100,
       "warning": 150
     },
-    "notificationsEnabled": true,
-    "autoStart": false,
+    "notificationsEnabled": false,
+    "autoStart": true,
     "theme": "system",
     "alertThreshold": 3,
     "alertCooldown": 5,
