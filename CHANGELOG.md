@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.1](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.5.0...avd-health-monitor-v0.5.1) (2026-01-13)
+
+
+### Miscellaneous
+
+* remove dependabot configuration and simplify CI workflow ([92eca17](https://github.com/seb07-cloud/avd-health-monitor/commit/92eca17b68955d4662ef0b3372403ef86849ea9f))
+
 ## [0.5.0](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.4.0...avd-health-monitor-v0.5.0) (2026-01-08)
 
 
