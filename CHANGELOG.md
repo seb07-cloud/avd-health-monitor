@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.6.0...avd-health-monitor-v0.7.0) (2026-01-13)
+
+
+### Features
+
+* add WinGet publishing workflow and remove template ([2967a96](https://github.com/seb07-cloud/avd-health-monitor/commit/2967a961ab06621fc9befba075ce42e5acb7e592))
+* add workflow dispatch inputs for release tagging in WinGet publishing ([4f921f6](https://github.com/seb07-cloud/avd-health-monitor/commit/4f921f63a6c74e776d679e2037f8ff59206bb0ad))
+
+
+### Bug Fixes
+
+* extract clean version for WinGet package ([a7f115f](https://github.com/seb07-cloud/avd-health-monitor/commit/a7f115f05bcd4e57f92bedee86853a46e045d451))
+
 ## [0.6.0](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.5.1...avd-health-monitor-v0.6.0) (2026-01-13)
 
 

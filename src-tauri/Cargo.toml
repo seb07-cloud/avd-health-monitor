@@ -1,6 +1,6 @@
 [package]
 name = "avd-health-monitor"
-version = "0.6.0" # x-release-please-version
+version = "0.7.0" # x-release-please-version
 description = "Azure Virtual Desktop Health Monitor - Monitor AVD endpoint health in real-time"
 authors = ["you"]
 edition = "2021"
