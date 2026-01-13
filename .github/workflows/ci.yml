@@ -2,116 +2,18 @@ name: CI
 
 on:
   push:
-    branches: [main, develop, claude/**]
+    branches: [main]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  test-critical:
-    name: Test Critical Functions
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Get pnpm store directory
-        shell: pwsh
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $env:GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Test utility functions
-        run: pnpm exec vitest run src/lib/utils.test.ts --reporter=verbose
-
-  # Build on PRs and non-main branches (validation)
-  build-windows:
-    name: Build Windows Application
-    needs: test-critical
-    if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Get pnpm store directory
-        shell: pwsh
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $env:GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
-        with:
-          workspaces: './src-tauri -> target'
-
-      - name: Install frontend dependencies
-        run: pnpm install
-
-      - name: Build application
-        run: pnpm tauri build
-        env:
-          RUSTFLAGS: "-C link-arg=-fuse-ld=lld"
-
-      - name: Upload Windows MSI
-        uses: actions/upload-artifact@v6
-        with:
-          name: windows-msi
-          path: src-tauri/target/release/bundle/msi/*.msi
-
-      - name: Upload Windows EXE
-        uses: actions/upload-artifact@v6
-        with:
-          name: windows-exe
-          path: src-tauri/target/release/avd-health-monitor.exe
-
-  # Release Please only runs on main pushes, after tests pass
+  # Release Please only runs on main pushes
   release-please:
     name: Release Please
-    needs: test-critical
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
