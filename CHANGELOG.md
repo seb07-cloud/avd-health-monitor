@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.5.1...avd-health-monitor-v0.6.0) (2026-01-13)
+
+
+### Features
+
+* update dependencies and remove surge-ping ([05ca8f7](https://github.com/seb07-cloud/avd-health-monitor/commit/05ca8f7096d54edcb246db3e5508a289b7b13f58))
+
 ## [0.5.1](https://github.com/seb07-cloud/avd-health-monitor/compare/avd-health-monitor-v0.5.0...avd-health-monitor-v0.5.1) (2026-01-13)
 
 
