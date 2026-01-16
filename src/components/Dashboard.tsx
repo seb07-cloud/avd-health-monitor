@@ -1,9 +1,13 @@
 import { useAppStore } from '../store/useAppStore';
+import { useOfflineDetection } from '../hooks/useOfflineDetection';
 import { EndpointTile } from './EndpointTile';
 import { FSLogixSection } from './FSLogixSection';
+import { OfflineBanner } from './OfflineBanner';
 import { Info } from 'lucide-react';
 
 export function Dashboard() {
+  // Initialize offline detection
+  useOfflineDetection();
   const endpoints = useAppStore((state) => state.endpoints);
   const endpointStatuses = useAppStore((state) => state.endpointStatuses);
   const modeInfo = useAppStore((state) => state.modeInfo);
@@ -92,6 +96,9 @@ export function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Offline Banner */}
+      <OfflineBanner />
 
       {/* FSLogix Storage Section */}
       <FSLogixSection />
