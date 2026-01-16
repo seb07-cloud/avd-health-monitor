@@ -1,3 +1,5 @@
+use faccess::PathExt;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
@@ -10,7 +12,7 @@ const SESSIONHOST_ENDPOINTS_FILENAME: &str = "sessionhost-endpoints.json";
 const ENDUSER_ENDPOINTS_FILENAME: &str = "enduser-endpoints.json";
 
 /// Application mode - determines which endpoint file to use
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, JsonSchema)]
 #[cfg_attr(test, derive(TS))]
 #[cfg_attr(test, ts(export))]
 #[serde(rename_all = "lowercase")]
@@ -26,7 +28,7 @@ impl Default for AppMode {
 }
 
 /// Theme setting for the application UI
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, JsonSchema)]
 #[cfg_attr(test, derive(TS))]
 #[cfg_attr(test, ts(export))]
 #[serde(rename_all = "lowercase")]
@@ -322,19 +324,18 @@ pub struct ModeInfo {
 pub fn is_portable() -> bool {
     if let Ok(exe_path) = std::env::current_exe() {
         if let Some(parent) = exe_path.parent() {
+            // Check 1: settings.json exists next to exe = portable mode
             let portable_settings = parent.join(SETTINGS_FILENAME);
             if portable_settings.exists() {
                 return true;
             }
+            // Check 2: Program Files = installed mode (not portable)
             let parent_str = parent.to_string_lossy().to_lowercase();
             if parent_str.contains("program files") {
                 return false;
             }
-            let test_file = parent.join(".portable_test");
-            if fs::write(&test_file, "test").is_ok() {
-                let _ = fs::remove_file(&test_file);
-                return true;
-            }
+            // Check 3: Use OS API to check write permission (no test file)
+            return parent.writable();
         }
     }
     false
