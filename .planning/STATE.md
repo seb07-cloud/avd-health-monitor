@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-16)
 
 **Core value:** Reliable, unobtrusive AVD endpoint monitoring
-**Current focus:** Phase 4 — Race Conditions (Phase 3 complete)
+**Current focus:** Phase 4 — Race Conditions (Phase 4 complete)
 
 ## Current Position
 
 Phase: 4 of 8 (Race Conditions)
-Plan: 1 of 3 complete
-Status: In progress
-Last activity: 2026-01-16 — Completed 4-01-PLAN.md
+Plan: 2 of 2 complete
+Status: Phase complete
+Last activity: 2026-01-16 — Completed 4-02-PLAN.md
 
-Progress: ██████████░░ ~50% (10 plans of ~20 estimated)
+Progress: ███████████░ ~55% (11 plans of ~20 estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: 2.3 min
-- Total execution time: 25 min
+- Total execution time: 27 min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: ██████████░░ ~50% (10 plans of ~20 estimated)
 | 1-installer-fixes | 2 | 6 min | 3 min |
 | 2-component-refactor | 2 | 8 min | 4 min |
 | 3-state-refactor | 5 | 9 min | 1.8 min |
-| 4-race-conditions | 1 | 2 min | 2 min |
+| 4-race-conditions | 2 | 4 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 3-02 (2 min), 3-03 (2 min), 3-04 (1 min), 3-05 (2 min), 4-01 (2 min)
+- Last 5 plans: 3-03 (2 min), 3-04 (1 min), 3-05 (2 min), 4-01 (2 min), 4-02 (2 min)
 - Trend: Consistent velocity
 
 ## Accumulated Context
@@ -67,6 +67,8 @@ Recent decisions affecting current work:
 | 2026-01-16 | 4-01 | Check current state before subscribe | Avoid unnecessary subscription if condition met |
 | 2026-01-16 | 4-01 | 5 second default timeout for waitForState | Prevents indefinite hanging |
 | 2026-01-16 | 4-01 | Graceful degradation on timeout | Still trigger test if endpoints timeout |
+| 2026-01-16 | 4-02 | Remove setTimeout since waitForEndpointsLoaded guarantees | Contract between SettingsPanel and App.tsx |
+| 2026-01-16 | 4-02 | Document contract in comments | Explain why setTimeout not needed |
 
 ### Pending Todos
 
@@ -80,5 +82,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-16
-Stopped at: Completed 4-01-PLAN.md
-Resume file: .planning/phases/4-race-conditions/4-02-PLAN.md
+Stopped at: Completed 4-02-PLAN.md (Phase 4 complete)
+Resume file: None
