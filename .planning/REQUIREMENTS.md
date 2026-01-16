@@ -39,9 +39,9 @@ Requirements for this refactor cycle.
 
 ### Tech Debt - Types
 
-- [ ] **TYPE-01**: LatencyThresholds type unified between Rust and TypeScript
-- [ ] **TYPE-02**: AppConfig type unified between Rust and TypeScript
-- [ ] **TYPE-03**: Type generation from Rust to TypeScript (ts-rs or similar)
+- [x] **TYPE-01**: LatencyThresholds type unified between Rust and TypeScript
+- [x] **TYPE-02**: AppConfig type unified between Rust and TypeScript
+- [x] **TYPE-03**: Type generation from Rust to TypeScript (ts-rs or similar)
 
 ### Security
 
@@ -112,9 +112,9 @@ Deferred to future release.
 | RACE-01 | Phase 4 | Complete |
 | RACE-02 | Phase 4 | Complete |
 | RACE-03 | Phase 4 | Complete |
-| TYPE-01 | Phase 5 | Pending |
-| TYPE-02 | Phase 5 | Pending |
-| TYPE-03 | Phase 5 | Pending |
+| TYPE-01 | Phase 5 | Complete |
+| TYPE-02 | Phase 5 | Complete |
+| TYPE-03 | Phase 5 | Complete |
 | SEC-01 | Phase 6 | Pending |
 | SEC-02 | Phase 6 | Pending |
 | SEC-03 | Phase 6 | Pending |
@@ -135,4 +135,4 @@ Deferred to future release.
 
 ---
 *Requirements defined: 2026-01-16*
-*Last updated: 2026-01-16 — Phase 4 requirements marked complete*
+*Last updated: 2026-01-16 — Phase 5 requirements marked complete*
