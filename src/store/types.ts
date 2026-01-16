@@ -93,6 +93,8 @@ export interface UiSlice {
   isMonitoring: boolean;
   isPaused: boolean;
   pendingTestTrigger: boolean;
+  isOffline: boolean;
+  lastOnlineTimestamp: number | null;
 
   // View management
   setCurrentView: (view: 'dashboard' | 'settings') => void;
@@ -100,6 +102,9 @@ export interface UiSlice {
   // Monitoring state
   setMonitoring: (isMonitoring: boolean) => void;
   setPaused: (isPaused: boolean) => void;
+
+  // Offline state
+  setOffline: (isOffline: boolean) => void;
 
   // Test trigger (used after mode switch)
   triggerTestNow: () => void;
