@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Settings, Globe, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Settings, Globe, Database, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import type { AppConfig, AppMode } from '../types';
 import { cn } from '../lib/utils';
@@ -10,6 +10,7 @@ import { ThresholdSettings } from './settings/ThresholdSettings';
 import { CustomEndpointManager } from './settings/CustomEndpointManager';
 import { ModeEndpointList } from './settings/ModeEndpointList';
 import { FSLogixSettings } from './settings/FSLogixSettings';
+import { DataManagement } from './settings/DataManagement';
 
 export function SettingsPanel() {
   const {
@@ -26,6 +27,7 @@ export function SettingsPanel() {
     general: false,
     endpoints: false,
     fslogix: false,
+    data: false,
   });
 
   const toggleSection = (section: string) => {
@@ -277,6 +279,34 @@ export function SettingsPanel() {
             onToggle={() => toggleSection('fslogix')}
           />
         )}
+
+        {/* Data Management */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <button
+            onClick={() => toggleSection('data')}
+            className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+                <Database className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Data Management
+              </h3>
+            </div>
+            {collapsedSections.data ? (
+              <ChevronDown className="w-5 h-5 text-gray-500" />
+            ) : (
+              <ChevronUp className="w-5 h-5 text-gray-500" />
+            )}
+          </button>
+
+          {!collapsedSections.data && (
+            <div className="px-4 pb-4">
+              <DataManagement />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
