@@ -3,6 +3,7 @@ import { ArrowLeft, Settings, Globe, ChevronDown, ChevronUp } from 'lucide-react
 import { useAppStore } from '../store/useAppStore';
 import type { AppConfig, AppMode } from '../types';
 import { cn } from '../lib/utils';
+import { waitForEndpointsLoaded } from '../lib/stateUtils';
 import { useSettingsSync } from '../hooks/useSettingsSync';
 import { ModeSelector } from './settings/ModeSelector';
 import { ThresholdSettings } from './settings/ThresholdSettings';
@@ -48,11 +49,16 @@ export function SettingsPanel() {
     // This also updates the config.mode in the store
     const success = await loadSettingsForMode(mode);
     if (success) {
-      // Small delay to ensure React has processed the state updates
-      // before triggering the test (endpoints need to be in the store)
-      setTimeout(() => {
+      // Wait for endpoints to be loaded before triggering tests
+      // This replaces setTimeout workaround with proper state sequencing
+      try {
+        await waitForEndpointsLoaded();
         triggerTestNow();
-      }, 50);
+      } catch (error) {
+        console.error('[SettingsPanel] Timeout waiting for endpoints:', error);
+        // Still trigger test - endpoints may have loaded via different path
+        triggerTestNow();
+      }
     }
   };
 
