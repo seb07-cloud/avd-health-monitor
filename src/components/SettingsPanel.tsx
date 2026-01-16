@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { ArrowLeft, XCircle, Monitor, User, ExternalLink, Plus, Trash2, Edit2, Check, X, Loader2, Wifi, BellOff, Bell, HardDrive, FolderOpen, Settings, Globe, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, XCircle, Plus, Trash2, Edit2, Check, X, Loader2, Wifi, BellOff, Bell, HardDrive, FolderOpen, Settings, Globe, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import type { AppConfig, AppMode, CustomEndpoint } from '../types';
-import { cn, validateThresholds, validateEndpointUrl } from '../lib/utils';
+import { cn, validateEndpointUrl } from '../lib/utils';
 import { useSettingsSync } from '../hooks/useSettingsSync';
+import { ModeSelector } from './settings/ModeSelector';
+import { ThresholdSettings } from './settings/ThresholdSettings';
 
 export function SettingsPanel() {
   const {
@@ -55,11 +57,6 @@ export function SettingsPanel() {
   const toggleSection = (section: string) => {
     setCollapsedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
-
-  // Real-time threshold validation
-  const thresholdErrors = useMemo(() => {
-    return validateThresholds(config.thresholds);
-  }, [config.thresholds]);
 
   // Safe threshold update with validation
   const handleThresholdChange = (field: 'excellent' | 'good' | 'warning', value: string) => {
@@ -243,109 +240,11 @@ export function SettingsPanel() {
 
       <div className="space-y-6">
         {/* Mode Selection */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Application Mode
-          </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-            Select the mode based on where this tool is running. Each mode monitors different endpoints.
-          </p>
-
-          <div className="grid grid-cols-2 gap-4">
-            {/* Session Host Mode */}
-            <button
-              onClick={() => handleModeChange('sessionhost')}
-              className={cn(
-                'p-4 rounded-lg border-2 text-left transition-all',
-                config.mode === 'sessionhost'
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-              )}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className={cn(
-                  'p-2 rounded-lg',
-                  config.mode === 'sessionhost'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
-                )}>
-                  <Monitor className="w-5 h-5" />
-                </div>
-                <span className={cn(
-                  'font-semibold',
-                  config.mode === 'sessionhost'
-                    ? 'text-blue-700 dark:text-blue-300'
-                    : 'text-gray-900 dark:text-white'
-                )}>
-                  Session Host Mode
-                </span>
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                For Azure Virtual Desktop session host VMs. Monitors endpoints required for AVD agent, RD Gateway, and core services.
-              </p>
-            </button>
-
-            {/* End User Mode */}
-            <button
-              onClick={() => handleModeChange('enduser')}
-              className={cn(
-                'p-4 rounded-lg border-2 text-left transition-all',
-                config.mode === 'enduser'
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-              )}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className={cn(
-                  'p-2 rounded-lg',
-                  config.mode === 'enduser'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
-                )}>
-                  <User className="w-5 h-5" />
-                </div>
-                <span className={cn(
-                  'font-semibold',
-                  config.mode === 'enduser'
-                    ? 'text-blue-700 dark:text-blue-300'
-                    : 'text-gray-900 dark:text-white'
-                )}>
-                  End User Device Mode
-                </span>
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                For client devices connecting to AVD. Monitors endpoints required for Remote Desktop clients and Azure AD.
-              </p>
-            </button>
-          </div>
-
-          {/* Mode Info & Source Link */}
-          {modeInfo && (
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Current: <span className="font-medium text-gray-900 dark:text-white">{modeInfo.name}</span>
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    {modeInfo.description}
-                  </p>
-                </div>
-                {modeInfo.source && (
-                  <a
-                    href={modeInfo.source}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1"
-                  >
-                    <ExternalLink className="w-3 h-3" />
-                    Microsoft Docs
-                  </a>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
+        <ModeSelector
+          config={config}
+          modeInfo={modeInfo}
+          onModeChange={handleModeChange}
+        />
 
         {/* General Settings */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -519,130 +418,11 @@ export function SettingsPanel() {
               </p>
             </div>
 
-            {/* Latency Thresholds - moved inside Endpoint Monitoring */}
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
-                Latency Thresholds
-              </h4>
-
-              {/* General validation error */}
-              {thresholdErrors.general && (
-                <div className="p-3 mb-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                  <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
-                    <XCircle className="w-4 h-4" />
-                    {thresholdErrors.general}
-                  </p>
-                </div>
-              )}
-
-              <div className="grid grid-cols-3 gap-4">
-                {/* Excellent */}
-                <div>
-                  <label className="block text-sm font-medium text-green-600 dark:text-green-400 mb-2">
-                    Excellent (ms)
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={config.thresholds.excellent}
-                    onChange={(e) => handleThresholdChange('excellent', e.target.value)}
-                    className={cn(
-                      'w-full px-3 py-2 bg-white dark:bg-gray-700 border rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:border-transparent',
-                      thresholdErrors.excellent
-                        ? 'border-red-500 focus:ring-red-500'
-                        : 'border-gray-300 dark:border-gray-600 focus:ring-green-500'
-                    )}
-                  />
-                  {thresholdErrors.excellent && (
-                    <p className="text-xs text-red-500 mt-1">{thresholdErrors.excellent}</p>
-                  )}
-                </div>
-
-                {/* Good */}
-                <div>
-                  <label className="block text-sm font-medium text-yellow-600 dark:text-yellow-400 mb-2">
-                    Good (ms)
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={config.thresholds.good}
-                    onChange={(e) => handleThresholdChange('good', e.target.value)}
-                    className={cn(
-                      'w-full px-3 py-2 bg-white dark:bg-gray-700 border rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:border-transparent',
-                      thresholdErrors.good
-                        ? 'border-red-500 focus:ring-red-500'
-                        : 'border-gray-300 dark:border-gray-600 focus:ring-yellow-500'
-                    )}
-                  />
-                  {thresholdErrors.good && (
-                    <p className="text-xs text-red-500 mt-1">{thresholdErrors.good}</p>
-                  )}
-                </div>
-
-                {/* Warning */}
-                <div>
-                  <label className="block text-sm font-medium text-orange-600 dark:text-orange-400 mb-2">
-                    Warning (ms)
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={config.thresholds.warning}
-                    onChange={(e) => handleThresholdChange('warning', e.target.value)}
-                    className={cn(
-                      'w-full px-3 py-2 bg-white dark:bg-gray-700 border rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:border-transparent',
-                      thresholdErrors.warning
-                        ? 'border-red-500 focus:ring-red-500'
-                        : 'border-gray-300 dark:border-gray-600 focus:ring-orange-500'
-                    )}
-                  />
-                  {thresholdErrors.warning && (
-                    <p className="text-xs text-red-500 mt-1">{thresholdErrors.warning}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Threshold scale visualization */}
-              <div className="pt-3">
-                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-1">
-                  <span>0ms</span>
-                  <span className="flex-1 text-center">Latency Scale</span>
-                  <span>{config.thresholds.warning + 50}ms+</span>
-                </div>
-                <div className="h-3 rounded-full overflow-hidden flex">
-                  <div
-                    className="bg-green-500 h-full"
-                    style={{ width: `${(config.thresholds.excellent / (config.thresholds.warning + 50)) * 100}%` }}
-                    title={`Excellent: 0-${config.thresholds.excellent}ms`}
-                  />
-                  <div
-                    className="bg-yellow-500 h-full"
-                    style={{ width: `${((config.thresholds.good - config.thresholds.excellent) / (config.thresholds.warning + 50)) * 100}%` }}
-                    title={`Good: ${config.thresholds.excellent + 1}-${config.thresholds.good}ms`}
-                  />
-                  <div
-                    className="bg-orange-500 h-full"
-                    style={{ width: `${((config.thresholds.warning - config.thresholds.good) / (config.thresholds.warning + 50)) * 100}%` }}
-                    title={`Warning: ${config.thresholds.good + 1}-${config.thresholds.warning}ms`}
-                  />
-                  <div
-                    className="bg-red-500 h-full flex-1"
-                    title={`Critical: ${config.thresholds.warning + 1}ms+`}
-                  />
-                </div>
-                <div className="flex justify-between text-xs mt-1">
-                  <span className="text-green-600 dark:text-green-400">Excellent</span>
-                  <span className="text-yellow-600 dark:text-yellow-400">Good</span>
-                  <span className="text-orange-600 dark:text-orange-400">Warning</span>
-                  <span className="text-red-600 dark:text-red-400">Critical</span>
-                </div>
-              </div>
-
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                Latency above {config.thresholds.warning}ms is considered Critical (red)
-              </p>
-            </div>
+            {/* Latency Thresholds */}
+            <ThresholdSettings
+              thresholds={config.thresholds}
+              onThresholdChange={handleThresholdChange}
+            />
 
             {/* Custom Endpoints - moved inside Endpoint Monitoring */}
             <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
