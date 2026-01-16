@@ -25,11 +25,11 @@ Requirements for this refactor cycle.
 
 ### Tech Debt - State
 
-- [ ] **STATE-01**: useAppStore split into configSlice
-- [ ] **STATE-02**: useAppStore split into endpointSlice
-- [ ] **STATE-03**: useAppStore split into fslogixSlice
-- [ ] **STATE-04**: useAppStore split into uiSlice
-- [ ] **STATE-05**: Persistence logic isolated in dedicated module
+- [x] **STATE-01**: useAppStore split into configSlice
+- [x] **STATE-02**: useAppStore split into endpointSlice
+- [x] **STATE-03**: useAppStore split into fslogixSlice
+- [x] **STATE-04**: useAppStore split into uiSlice
+- [x] **STATE-05**: Persistence logic isolated in dedicated module
 
 ### Tech Debt - Race Conditions
 
@@ -104,11 +104,11 @@ Deferred to future release.
 | COMP-04 | Phase 2 | Complete |
 | COMP-05 | Phase 2 | Complete |
 | COMP-06 | Phase 2 | Complete |
-| STATE-01 | Phase 3 | Pending |
-| STATE-02 | Phase 3 | Pending |
-| STATE-03 | Phase 3 | Pending |
-| STATE-04 | Phase 3 | Pending |
-| STATE-05 | Phase 3 | Pending |
+| STATE-01 | Phase 3 | Complete |
+| STATE-02 | Phase 3 | Complete |
+| STATE-03 | Phase 3 | Complete |
+| STATE-04 | Phase 3 | Complete |
+| STATE-05 | Phase 3 | Complete |
 | RACE-01 | Phase 4 | Pending |
 | RACE-02 | Phase 4 | Pending |
 | RACE-03 | Phase 4 | Pending |
@@ -135,4 +135,4 @@ Deferred to future release.
 
 ---
 *Requirements defined: 2026-01-16*
-*Last updated: 2026-01-16 — Phase 2 requirements marked complete*
+*Last updated: 2026-01-16 — Phase 3 requirements marked complete*
