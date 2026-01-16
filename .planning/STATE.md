@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-16)
 
 **Core value:** Reliable, unobtrusive AVD endpoint monitoring
-**Current focus:** Phase 7 — Testing (Phase 6 complete)
+**Current focus:** Phase 8 — Documentation (Phase 7 complete)
 
 ## Current Position
 
 Phase: 7 of 8 (Testing)
-Plan: 2 of 3 complete
-Status: In progress
-Last activity: 2026-01-16 — Completed 7-03-PLAN.md
+Plan: 3 of 3 complete
+Status: Phase complete
+Last activity: 2026-01-16 — Completed 7-02-PLAN.md
 
-Progress: █████████████████░ ~85% (17 plans of ~20 estimated)
+Progress: █████████████████░ ~90% (18 plans of ~20 estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
+- Total plans completed: 18
 - Average duration: 2.6 min
-- Total execution time: 44 min
+- Total execution time: 46 min
 
 **By Phase:**
 
@@ -33,10 +33,10 @@ Progress: █████████████████░ ~85% (17 plans 
 | 4-race-conditions | 2 | 4 min | 2 min |
 | 5-type-unification | 2 | 5 min | 2.5 min |
 | 6-security | 2 | 6 min | 3 min |
-| 7-testing | 2 | 6 min | 3 min |
+| 7-testing | 3 | 8 min | 2.7 min |
 
 **Recent Trend:**
-- Last 5 plans: 5-02 (2 min), 6-01 (3 min), 6-02 (3 min), 7-01 (4 min), 7-03 (2 min)
+- Last 5 plans: 6-01 (3 min), 6-02 (3 min), 7-01 (4 min), 7-02 (2 min), 7-03 (2 min)
 - Trend: Consistent velocity
 
 ## Accumulated Context
@@ -88,6 +88,8 @@ Recent decisions affecting current work:
 | 2026-01-16 | 7-01 | vi.mock at test file level | Slice tests mock @tauri-apps/api/core directly |
 | 2026-01-16 | 7-01 | getState/setState pattern for store tests | No component rendering needed |
 | 2026-01-16 | 7-01 | __TAURI_INTERNALS__ mock structure | Tauri v2 compatibility |
+| 2026-01-16 | 7-02 | vi.mock at test file level for integration tests | Isolates Tauri invoke calls from file system |
+| 2026-01-16 | 7-02 | Mode switch flow simulation via store actions | Call setConfig, setEndpoints, triggerTestNow in sequence |
 | 2026-01-16 | 7-03 | Rust tests in typecheck job | Runs on all pushes/PRs, not just releases |
 
 ### Pending Todos
@@ -102,5 +104,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-16
-Stopped at: Completed 7-03-PLAN.md
-Resume file: .planning/phases/7-testing/7-02-PLAN.md
+Stopped at: Completed 7-02-PLAN.md (Phase 7 complete)
+Resume file: None (Phase 7 complete, ready for Phase 8)
