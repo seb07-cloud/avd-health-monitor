@@ -10,7 +10,7 @@ Comprehensive refactor of the AVD Health Monitor codebase. Starting with the imm
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Installer Fixes** - Per-user install, fix WiX/NSIS builds
+- [x] **Phase 1: Installer Fixes** - Per-user install, fix WiX/NSIS builds
 - [ ] **Phase 2: Component Refactor** - Break up SettingsPanel.tsx
 - [ ] **Phase 3: State Refactor** - Split useAppStore into slices
 - [ ] **Phase 4: Race Conditions** - Replace setTimeout workarounds
@@ -30,7 +30,7 @@ Comprehensive refactor of the AVD Health Monitor codebase. Starting with the imm
   2. MSI builds successfully in CI
   3. NSIS builds successfully in CI
   4. Installer offers per-user or system-wide choice
-**Plans**: TBD
+**Plans**: 1-01 (Tauri config), 1-02 (CI workflow)
 
 ### Phase 2: Component Refactor
 **Goal**: SettingsPanel.tsx broken into maintainable components
@@ -114,7 +114,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Installer Fixes | 0/? | Not started | - |
+| 1. Installer Fixes | 2/2 | Complete | 2026-01-16 |
 | 2. Component Refactor | 0/? | Not started | - |
 | 3. State Refactor | 0/? | Not started | - |
 | 4. Race Conditions | 0/? | Not started | - |

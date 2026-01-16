@@ -9,10 +9,10 @@ Requirements for this refactor cycle.
 
 ### Installer
 
-- [ ] **INST-01**: Application installs without admin privileges (per-user install to AppData)
-- [ ] **INST-02**: WiX MSI compilation succeeds without errors
-- [ ] **INST-03**: NSIS installer builds successfully
-- [ ] **INST-04**: Installer provides option for system-wide or per-user install
+- [x] **INST-01**: Application installs without admin privileges (per-user install to AppData)
+- [x] **INST-02**: WiX MSI compilation succeeds without errors
+- [x] **INST-03**: NSIS installer builds successfully
+- [x] **INST-04**: Installer provides option for system-wide or per-user install
 
 ### Tech Debt - Components
 
@@ -94,10 +94,10 @@ Deferred to future release.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INST-01 | Phase 1 | Pending |
-| INST-02 | Phase 1 | Pending |
-| INST-03 | Phase 1 | Pending |
-| INST-04 | Phase 1 | Pending |
+| INST-01 | Phase 1 | Complete |
+| INST-02 | Phase 1 | Complete |
+| INST-03 | Phase 1 | Complete |
+| INST-04 | Phase 1 | Complete |
 | COMP-01 | Phase 2 | Pending |
 | COMP-02 | Phase 2 | Pending |
 | COMP-03 | Phase 2 | Pending |
@@ -135,4 +135,4 @@ Deferred to future release.
 
 ---
 *Requirements defined: 2026-01-16*
-*Last updated: 2026-01-16 after initial definition*
+*Last updated: 2026-01-16 — Phase 1 requirements marked complete*
