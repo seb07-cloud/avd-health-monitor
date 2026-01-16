@@ -13,7 +13,7 @@ Comprehensive refactor of the AVD Health Monitor codebase. Starting with the imm
 - [x] **Phase 1: Installer Fixes** - Per-user install, fix WiX/NSIS builds
 - [x] **Phase 2: Component Refactor** - Break up SettingsPanel.tsx
 - [x] **Phase 3: State Refactor** - Split useAppStore into slices
-- [ ] **Phase 4: Race Conditions** - Replace setTimeout workarounds
+- [x] **Phase 4: Race Conditions** - Replace setTimeout workarounds
 - [ ] **Phase 5: Type Unification** - Unify Rust/TypeScript types
 - [ ] **Phase 6: Security** - Schema validation, path safety
 - [ ] **Phase 7: Testing** - Integration and unit tests
@@ -62,7 +62,7 @@ Comprehensive refactor of the AVD Health Monitor codebase. Starting with the imm
   1. Mode switch works without setTimeout
   2. Tests trigger only after endpoints loaded
   3. No flaky behavior during mode switches
-**Plans**: TBD
+**Plans**: 4-01 (waitForState utility), 4-02 (remove setTimeout)
 
 ### Phase 5: Type Unification
 **Goal**: Single source of truth for shared types
@@ -117,7 +117,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 1. Installer Fixes | 2/2 | Complete | 2026-01-16 |
 | 2. Component Refactor | 2/2 | Complete | 2026-01-16 |
 | 3. State Refactor | 5/5 | Complete | 2026-01-16 |
-| 4. Race Conditions | 0/? | Not started | - |
+| 4. Race Conditions | 2/2 | Complete | 2026-01-16 |
 | 5. Type Unification | 0/? | Not started | - |
 | 6. Security | 0/? | Not started | - |
 | 7. Testing | 0/? | Not started | - |

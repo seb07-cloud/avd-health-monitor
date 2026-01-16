@@ -33,9 +33,9 @@ Requirements for this refactor cycle.
 
 ### Tech Debt - Race Conditions
 
-- [ ] **RACE-01**: Mode switch uses proper state sequencing (no setTimeout)
-- [ ] **RACE-02**: App.tsx test triggers use Zustand subscribe pattern
-- [ ] **RACE-03**: Endpoint loading completes before tests trigger
+- [x] **RACE-01**: Mode switch uses proper state sequencing (no setTimeout)
+- [x] **RACE-02**: App.tsx test triggers use Zustand subscribe pattern
+- [x] **RACE-03**: Endpoint loading completes before tests trigger
 
 ### Tech Debt - Types
 
@@ -109,9 +109,9 @@ Deferred to future release.
 | STATE-03 | Phase 3 | Complete |
 | STATE-04 | Phase 3 | Complete |
 | STATE-05 | Phase 3 | Complete |
-| RACE-01 | Phase 4 | Pending |
-| RACE-02 | Phase 4 | Pending |
-| RACE-03 | Phase 4 | Pending |
+| RACE-01 | Phase 4 | Complete |
+| RACE-02 | Phase 4 | Complete |
+| RACE-03 | Phase 4 | Complete |
 | TYPE-01 | Phase 5 | Pending |
 | TYPE-02 | Phase 5 | Pending |
 | TYPE-03 | Phase 5 | Pending |
@@ -135,4 +135,4 @@ Deferred to future release.
 
 ---
 *Requirements defined: 2026-01-16*
-*Last updated: 2026-01-16 — Phase 3 requirements marked complete*
+*Last updated: 2026-01-16 — Phase 4 requirements marked complete*
