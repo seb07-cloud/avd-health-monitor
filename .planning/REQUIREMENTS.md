@@ -45,9 +45,9 @@ Requirements for this refactor cycle.
 
 ### Security
 
-- [ ] **SEC-01**: Settings JSON validated against schema on load
-- [ ] **SEC-02**: Portable mode uses OS API for permission check (no test file)
-- [ ] **SEC-03**: File paths validated before external editor invocation
+- [x] **SEC-01**: Settings JSON validated against schema on load
+- [x] **SEC-02**: Portable mode uses OS API for permission check (no test file)
+- [x] **SEC-03**: File paths validated before external editor invocation
 
 ### Testing
 
@@ -115,9 +115,9 @@ Deferred to future release.
 | TYPE-01 | Phase 5 | Complete |
 | TYPE-02 | Phase 5 | Complete |
 | TYPE-03 | Phase 5 | Complete |
-| SEC-01 | Phase 6 | Pending |
-| SEC-02 | Phase 6 | Pending |
-| SEC-03 | Phase 6 | Pending |
+| SEC-01 | Phase 6 | Complete |
+| SEC-02 | Phase 6 | Complete |
+| SEC-03 | Phase 6 | Complete |
 | TEST-01 | Phase 7 | Pending |
 | TEST-02 | Phase 7 | Pending |
 | TEST-03 | Phase 7 | Pending |
@@ -135,4 +135,4 @@ Deferred to future release.
 
 ---
 *Requirements defined: 2026-01-16*
-*Last updated: 2026-01-16 — Phase 5 requirements marked complete*
+*Last updated: 2026-01-16 — Phase 6 requirements marked complete*
