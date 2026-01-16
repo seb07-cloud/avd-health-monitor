@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Download, Upload, Check, AlertCircle } from 'lucide-react';
+import { Download, Upload, FileSpreadsheet, Check, AlertCircle } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { exportSettings } from '../../services/exportService';
 import { importSettings } from '../../services/importService';
+import { exportHistoryToCsv } from '../../services/historyExportService';
 import type { SettingsFile } from '../../types';
 
 type StatusMessage = {
@@ -13,12 +14,14 @@ type StatusMessage = {
 export function DataManagement() {
   const config = useAppStore((state) => state.config);
   const customEndpoints = useAppStore((state) => state.customEndpoints);
+  const endpointStatuses = useAppStore((state) => state.endpointStatuses);
   const setConfig = useAppStore((state) => state.setConfig);
   const setEndpoints = useAppStore((state) => state.setEndpoints);
   const setModeInfo = useAppStore((state) => state.setModeInfo);
 
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [isExportingHistory, setIsExportingHistory] = useState(false);
   const [statusMessage, setStatusMessage] = useState<StatusMessage>(null);
 
   // Clear status message after 5 seconds
@@ -82,6 +85,28 @@ export function DataManagement() {
     }
   };
 
+  const handleExportHistory = async () => {
+    setIsExportingHistory(true);
+    setStatusMessage(null);
+
+    try {
+      const success = await exportHistoryToCsv(endpointStatuses);
+
+      if (success) {
+        showStatus({ type: 'success', text: 'History exported successfully' });
+      }
+      // If !success, user cancelled - no message needed
+    } catch (error) {
+      if (error instanceof Error && error.message === 'No history data to export') {
+        showStatus({ type: 'error', text: 'No history data to export. Wait for some latency tests to complete.' });
+      } else {
+        showStatus({ type: 'error', text: `Export failed: ${error}` });
+      }
+    } finally {
+      setIsExportingHistory(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Status Message */}
@@ -126,6 +151,24 @@ export function DataManagement() {
       <p className="text-xs text-gray-500 dark:text-gray-400">
         Export your settings to backup or share with other machines. Import to restore a previous configuration.
       </p>
+
+      {/* History Export */}
+      <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Latency History
+        </h4>
+        <button
+          onClick={handleExportHistory}
+          disabled={isExportingHistory || isExporting || isImporting}
+          className="flex items-center gap-2 px-4 py-2.5 bg-green-500 hover:bg-green-600 disabled:bg-green-300 dark:disabled:bg-green-800 text-white rounded-lg transition-colors font-medium"
+        >
+          <FileSpreadsheet className="w-4 h-4" />
+          {isExportingHistory ? 'Exporting...' : 'Export History to CSV'}
+        </button>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          Export latency history data to a CSV file for analysis in Excel or other tools.
+        </p>
+      </div>
     </div>
   );
 }
