@@ -15,10 +15,12 @@ mod logger;
 mod autostart;
 mod settings;
 mod fslogix;
+mod path_safety;
 
 use tray_icon::{generate_tray_icon, IconStatus, LatencyThresholds};
 use logger::Logger;
-use settings::{SettingsFile, SettingsResponse, AppMode, FSLogixPathState, get_settings_path, load_settings, load_settings_with_endpoints, load_settings_with_endpoints_for_mode, save_settings, initialize_settings, update_endpoint_state};
+use settings::{SettingsFile, SettingsResponse, AppMode, FSLogixPathState, get_settings_path, get_settings_dir, load_settings, load_settings_with_endpoints, load_settings_with_endpoints_for_mode, save_settings, initialize_settings, update_endpoint_state};
+use path_safety::validate_path_in_dir;
 use fslogix::FSLogixPath;
 
 // Global tray icon reference (using concrete Wry runtime type)
@@ -136,11 +138,15 @@ fn write_settings_file(settings: SettingsFile) -> Result<(), String> {
 #[tauri::command]
 fn open_settings_file() -> Result<(), String> {
     let path = get_settings_path().map_err(|e| e.to_string())?;
+    let settings_dir = get_settings_dir().map_err(|e| e.to_string())?;
+
+    // Validate path is within settings directory to prevent path traversal
+    let safe_path = validate_path_in_dir(&path, &settings_dir)?;
 
     #[cfg(target_os = "windows")]
     {
         std::process::Command::new("notepad")
-            .arg(&path)
+            .arg(&safe_path)
             .spawn()
             .map_err(|e| e.to_string())?;
     }
@@ -149,7 +155,7 @@ fn open_settings_file() -> Result<(), String> {
     {
         std::process::Command::new("open")
             .arg("-t")
-            .arg(&path)
+            .arg(&safe_path)
             .spawn()
             .map_err(|e| e.to_string())?;
     }
@@ -157,7 +163,7 @@ fn open_settings_file() -> Result<(), String> {
     #[cfg(target_os = "linux")]
     {
         std::process::Command::new("xdg-open")
-            .arg(&path)
+            .arg(&safe_path)
             .spawn()
             .map_err(|e| e.to_string())?;
     }
@@ -166,17 +172,19 @@ fn open_settings_file() -> Result<(), String> {
 }
 
 fn open_resource_file(app: &tauri::AppHandle, filename: &str) -> Result<(), String> {
-    let resource_path = app
+    let resource_base = app
         .path()
         .resource_dir()
-        .map_err(|e| e.to_string())?
-        .join("resources")
-        .join(filename);
+        .map_err(|e| e.to_string())?;
+    let resource_path = resource_base.join("resources").join(filename);
+
+    // Validate path is within resource directory to prevent path traversal
+    let safe_path = validate_path_in_dir(&resource_path, &resource_base)?;
 
     #[cfg(target_os = "windows")]
     {
         std::process::Command::new("notepad")
-            .arg(&resource_path)
+            .arg(&safe_path)
             .spawn()
             .map_err(|e| e.to_string())?;
     }
@@ -185,7 +193,7 @@ fn open_resource_file(app: &tauri::AppHandle, filename: &str) -> Result<(), Stri
     {
         std::process::Command::new("open")
             .arg("-t")
-            .arg(&resource_path)
+            .arg(&safe_path)
             .spawn()
             .map_err(|e| e.to_string())?;
     }
@@ -193,7 +201,7 @@ fn open_resource_file(app: &tauri::AppHandle, filename: &str) -> Result<(), Stri
     #[cfg(target_os = "linux")]
     {
         std::process::Command::new("xdg-open")
-            .arg(&resource_path)
+            .arg(&safe_path)
             .spawn()
             .map_err(|e| e.to_string())?;
     }
