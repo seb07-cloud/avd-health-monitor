@@ -1,3 +1,9 @@
+// Re-exported from Rust-generated types (source of truth)
+export type { LatencyThresholds, AppConfig, AppMode, Theme } from './generated/bindings';
+
+// Import for use in this file's interfaces
+import type { AppConfig } from './generated/bindings';
+
 export interface Endpoint {
   id: string;
   name: string;
@@ -14,9 +20,6 @@ export interface Endpoint {
   wildcardPattern?: string; // If set, this is a wildcard endpoint (e.g., "*.wvd.microsoft.com")
   knownSubdomains?: string[]; // Known subdomains to test for wildcard endpoints
 }
-
-// Application mode - determines which endpoints are loaded
-export type AppMode = 'sessionhost' | 'enduser';
 
 // Mode information from the loaded endpoint file
 export interface ModeInfo {
@@ -40,30 +43,6 @@ export interface EndpointError {
   code: string;
   timestamp: number;
   userMessage: string; // User-friendly error message
-}
-
-export interface LatencyThresholds {
-  excellent: number;  // 0-30ms
-  good: number;       // 31-80ms
-  warning: number;    // 81-150ms
-  // critical: 150ms+
-}
-
-export interface AppConfig {
-  mode: AppMode; // Which endpoint set to use
-  testInterval: number; // seconds
-  retentionDays: number;
-  thresholds: LatencyThresholds;
-  notificationsEnabled: boolean;
-  autoStart: boolean;
-  theme: 'light' | 'dark' | 'nord' | 'cyberpunk' | 'system';
-  alertThreshold: number; // Number of consecutive high latency checks before showing notification
-  alertCooldown: number; // Minutes between repeated alerts (default: 5)
-  graphTimeRange: number; // Hours of history to show in graph (default: 1)
-  fslogixEnabled: boolean; // Whether to monitor FSLogix storage paths
-  fslogixTestInterval: number; // Seconds between FSLogix connectivity tests (default: 60)
-  fslogixAlertThreshold: number; // Consecutive failures before FSLogix alert (default: 3)
-  fslogixAlertCooldown: number; // Minutes between repeated FSLogix alerts (default: 5)
 }
 
 // Custom endpoint added by user (stored in settings.json)
