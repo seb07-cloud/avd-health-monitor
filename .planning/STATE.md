@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-16)
 ## Current Position
 
 Phase: 8 of 8 (Features)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-16 — Phase 7 verified and complete
+Plan: 3 of 3 complete
+Status: In progress
+Last activity: 2026-01-16 — Completed 8-03-PLAN.md
 
-Progress: █████████████████░ ~90% (18 plans of ~20 estimated)
+Progress: █████████████████░░ ~95% (21 plans of ~22 estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
-- Average duration: 2.6 min
-- Total execution time: 46 min
+- Total plans completed: 21
+- Average duration: 2.5 min
+- Total execution time: 52 min
 
 **By Phase:**
 
@@ -34,9 +34,10 @@ Progress: █████████████████░ ~90% (18 plans 
 | 5-type-unification | 2 | 5 min | 2.5 min |
 | 6-security | 2 | 6 min | 3 min |
 | 7-testing | 3 | 8 min | 2.7 min |
+| 8-features | 3 | 6 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 6-01 (3 min), 6-02 (3 min), 7-01 (4 min), 7-02 (2 min), 7-03 (2 min)
+- Last 5 plans: 7-01 (4 min), 7-02 (2 min), 7-03 (2 min), 8-01 (2 min), 8-03 (2 min)
 - Trend: Consistent velocity
 
 ## Accumulated Context
@@ -91,6 +92,9 @@ Recent decisions affecting current work:
 | 2026-01-16 | 7-02 | vi.mock at test file level for integration tests | Isolates Tauri invoke calls from file system |
 | 2026-01-16 | 7-02 | Mode switch flow simulation via store actions | Call setConfig, setEndpoints, triggerTestNow in sequence |
 | 2026-01-16 | 7-03 | Rust tests in typecheck job | Runs on all pushes/PRs, not just releases |
+| 2026-01-16 | 8-03 | lastOnlineTimestamp updates when going online | Not when going offline - tracks last known good connection |
+| 2026-01-16 | 8-03 | OFFLINE_THRESHOLD of 3 consecutive failures | Avoid false positives from single failures |
+| 2026-01-16 | 8-03 | Hook returns reportSuccess/reportFailure | Future latency service integration |
 
 ### Pending Todos
 
@@ -104,5 +108,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-16
-Stopped at: Phase 7 verified and complete
-Resume file: None - ready for Phase 8
+Stopped at: Completed 8-03-PLAN.md
+Resume file: None
