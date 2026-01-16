@@ -52,7 +52,7 @@ Comprehensive refactor of the AVD Health Monitor codebase. Starting with the imm
   2. Persistence logic isolated
   3. Existing user data migrates correctly
   4. No functionality regressions
-**Plans**: TBD
+**Plans**: 3-01 (persistence + types), 3-02 (configSlice + uiSlice), 3-03 (endpointSlice), 3-04 (fslogixSlice), 3-05 (combine store)
 
 ### Phase 4: Race Conditions
 **Goal**: Proper state sequencing, no setTimeout workarounds
@@ -110,13 +110,13 @@ Comprehensive refactor of the AVD Health Monitor codebase. Starting with the imm
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Installer Fixes | 2/2 | Complete | 2026-01-16 |
 | 2. Component Refactor | 2/2 | Complete | 2026-01-16 |
-| 3. State Refactor | 0/? | Not started | - |
+| 3. State Refactor | 0/5 | Planned | - |
 | 4. Race Conditions | 0/? | Not started | - |
 | 5. Type Unification | 0/? | Not started | - |
 | 6. Security | 0/? | Not started | - |
