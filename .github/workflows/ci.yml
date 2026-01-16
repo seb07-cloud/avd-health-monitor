@@ -88,7 +88,7 @@ jobs:
           # Find and upload MSI
           MSI_FILE=$(find src-tauri/target/release/bundle/msi -name "*.msi" -type f 2>/dev/null | head -1)
           if [ -n "$MSI_FILE" ]; then
-            echo "Uploading MSI: $MSI_FILE"
+            echo "Uploading MSI (system-wide, admin required): $MSI_FILE"
             gh release upload "$VERSION" "$MSI_FILE" --clobber
           else
             echo "Warning: MSI file not found"
@@ -119,7 +119,7 @@ jobs:
           # Upload NSIS installer if available
           NSIS_FILE=$(find src-tauri/target/release/bundle/nsis -name "*.exe" -type f 2>/dev/null | head -1)
           if [ -n "$NSIS_FILE" ]; then
-            echo "Uploading NSIS: $NSIS_FILE"
+            echo "Uploading NSIS (per-user, no admin): $NSIS_FILE"
             gh release upload "$VERSION" "$NSIS_FILE" --clobber
           fi
 
