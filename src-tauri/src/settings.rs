@@ -46,7 +46,7 @@ impl Default for Theme {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(test, derive(TS))]
 #[cfg_attr(test, ts(export))]
 pub struct LatencyThresholds {
@@ -155,7 +155,7 @@ pub struct EndpointFile {
     pub categories: Vec<EndpointCategory>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(test, derive(TS))]
 #[cfg_attr(test, ts(export))]
 #[serde(rename_all = "camelCase")]
@@ -240,7 +240,7 @@ impl Default for AppConfig {
 }
 
 /// Custom endpoint added by user (stored in settings.json)
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct CustomEndpoint {
     pub id: String,
@@ -263,7 +263,7 @@ fn default_custom_category() -> Option<String> {
 }
 
 /// FSLogix path state (muted status) stored in settings.json
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct FSLogixPathState {
     /// The path ID (e.g., "fslogix-profile-0")
@@ -274,7 +274,7 @@ pub struct FSLogixPathState {
 }
 
 /// Settings file structure - contains config only, endpoints are in separate files
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct SettingsFile {
     #[serde(default = "default_version")]
