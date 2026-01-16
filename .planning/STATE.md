@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-16)
 
 **Core value:** Reliable, unobtrusive AVD endpoint monitoring
-**Current focus:** Phase 5 — Type Unification (Phase 4 complete)
+**Current focus:** Phase 5 — Type Unification (5-01 complete)
 
 ## Current Position
 
 Phase: 5 of 8 (Type Unification)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-16 — Phase 4 verified and complete
+Plan: 1 of 2 complete
+Status: In progress
+Last activity: 2026-01-16 — Completed 5-01-PLAN.md
 
-Progress: ███████████░ ~55% (11 plans of ~20 estimated)
+Progress: ████████████░ ~60% (12 plans of ~20 estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
-- Average duration: 2.3 min
-- Total execution time: 27 min
+- Total plans completed: 12
+- Average duration: 2.4 min
+- Total execution time: 30 min
 
 **By Phase:**
 
@@ -31,9 +31,10 @@ Progress: ███████████░ ~55% (11 plans of ~20 estimated)
 | 2-component-refactor | 2 | 8 min | 4 min |
 | 3-state-refactor | 5 | 9 min | 1.8 min |
 | 4-race-conditions | 2 | 4 min | 2 min |
+| 5-type-unification | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 3-03 (2 min), 3-04 (1 min), 3-05 (2 min), 4-01 (2 min), 4-02 (2 min)
+- Last 5 plans: 3-04 (1 min), 3-05 (2 min), 4-01 (2 min), 4-02 (2 min), 5-01 (3 min)
 - Trend: Consistent velocity
 
 ## Accumulated Context
@@ -69,6 +70,10 @@ Recent decisions affecting current work:
 | 2026-01-16 | 4-01 | Graceful degradation on timeout | Still trigger test if endpoints timeout |
 | 2026-01-16 | 4-02 | Remove setTimeout since waitForEndpointsLoaded guarantees | Contract between SettingsPanel and App.tsx |
 | 2026-01-16 | 4-02 | Document contract in comments | Explain why setTimeout not needed |
+| 2026-01-16 | 5-01 | ts-rs 10.1.0 for Rust 1.75+ compatibility | 11.x requires Rust 1.88.0 |
+| 2026-01-16 | 5-01 | cfg_attr(test, derive(TS)) for test-time-only generation | Avoid runtime overhead |
+| 2026-01-16 | 5-01 | Theme enum replaces String | Compile-time theme validation |
+| 2026-01-16 | 5-01 | Re-export from types.ts | Maintains single import point |
 
 ### Pending Todos
 
@@ -82,5 +87,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-16
-Stopped at: Phase 4 verified and complete
-Resume file: None - ready for Phase 5
+Stopped at: Completed 5-01-PLAN.md
+Resume file: None - ready for 5-02
