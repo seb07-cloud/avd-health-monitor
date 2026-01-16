@@ -30,6 +30,52 @@ jobs:
           config-file: .release-please-config.json
           manifest-file: .release-please-manifest.json
 
+  # Type checking runs on all pushes and PRs
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Generate TypeScript types from Rust
+        run: ./scripts/generate-types.sh
+
+      - name: Check for type drift
+        run: |
+          # If generated types differ from committed, fail the build
+          if ! git diff --exit-code src/generated/bindings.ts; then
+            echo "ERROR: Generated types differ from committed types!"
+            echo "Run './scripts/generate-types.sh' locally and commit the changes."
+            exit 1
+          fi
+
+      - name: TypeScript type check
+        run: pnpm exec tsc --noEmit
+
+      - name: Run frontend tests
+        run: pnpm test:run
+
   # Build and upload binaries only when a release is created
   build-and-upload:
     name: Build and Upload Release
