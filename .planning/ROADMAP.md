@@ -83,7 +83,7 @@ Comprehensive refactor of the AVD Health Monitor codebase. Starting with the imm
   1. Malformed settings.json rejected with error
   2. Portable mode doesn't create test files
   3. Path injection prevented in editor invocation
-**Plans**: TBD
+**Plans**: 6-01 (faccess + path safety), 6-02 (schema validation)
 
 ### Phase 7: Testing
 **Goal**: Meaningful test coverage for critical paths
@@ -119,6 +119,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 3. State Refactor | 5/5 | Complete | 2026-01-16 |
 | 4. Race Conditions | 2/2 | Complete | 2026-01-16 |
 | 5. Type Unification | 2/2 | Complete | 2026-01-16 |
-| 6. Security | 0/? | Not started | - |
+| 6. Security | 0/2 | Planned | - |
 | 7. Testing | 0/? | Not started | - |
 | 8. Features | 0/? | Not started | - |
