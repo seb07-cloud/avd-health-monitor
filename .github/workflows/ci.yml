@@ -73,6 +73,11 @@ jobs:
       - name: TypeScript type check
         run: pnpm exec tsc --noEmit
 
+      - name: Run Rust tests
+        run: |
+          cd src-tauri
+          cargo test
+
       - name: Run frontend tests
         run: pnpm test:run
 
