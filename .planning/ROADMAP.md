@@ -11,7 +11,7 @@ Comprehensive refactor of the AVD Health Monitor codebase. Starting with the imm
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Installer Fixes** - Per-user install, fix WiX/NSIS builds
-- [ ] **Phase 2: Component Refactor** - Break up SettingsPanel.tsx
+- [x] **Phase 2: Component Refactor** - Break up SettingsPanel.tsx
 - [ ] **Phase 3: State Refactor** - Split useAppStore into slices
 - [ ] **Phase 4: Race Conditions** - Replace setTimeout workarounds
 - [ ] **Phase 5: Type Unification** - Unify Rust/TypeScript types
@@ -41,7 +41,7 @@ Comprehensive refactor of the AVD Health Monitor codebase. Starting with the imm
   2. Each settings section is its own component
   3. All existing functionality preserved
   4. No visual regressions
-**Plans**: TBD
+**Plans**: 2-01 (ModeSelector, ThresholdSettings), 2-02 (CustomEndpointManager, ModeEndpointList, FSLogixSettings)
 
 ### Phase 3: State Refactor
 **Goal**: useAppStore split into domain slices
@@ -115,7 +115,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Installer Fixes | 2/2 | Complete | 2026-01-16 |
-| 2. Component Refactor | 0/? | Not started | - |
+| 2. Component Refactor | 2/2 | Complete | 2026-01-16 |
 | 3. State Refactor | 0/? | Not started | - |
 | 4. Race Conditions | 0/? | Not started | - |
 | 5. Type Unification | 0/? | Not started | - |

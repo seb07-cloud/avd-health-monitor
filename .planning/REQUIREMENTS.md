@@ -16,12 +16,12 @@ Requirements for this refactor cycle.
 
 ### Tech Debt - Components
 
-- [ ] **COMP-01**: SettingsPanel.tsx split into ModeSelector component
-- [ ] **COMP-02**: SettingsPanel.tsx split into ThresholdSettings component
-- [ ] **COMP-03**: SettingsPanel.tsx split into CustomEndpointManager component
-- [ ] **COMP-04**: SettingsPanel.tsx split into ModeEndpointList component
-- [ ] **COMP-05**: SettingsPanel.tsx split into FSLogixSettings component
-- [ ] **COMP-06**: SettingsPanel.tsx under 300 lines after refactor
+- [x] **COMP-01**: SettingsPanel.tsx split into ModeSelector component
+- [x] **COMP-02**: SettingsPanel.tsx split into ThresholdSettings component
+- [x] **COMP-03**: SettingsPanel.tsx split into CustomEndpointManager component
+- [x] **COMP-04**: SettingsPanel.tsx split into ModeEndpointList component
+- [x] **COMP-05**: SettingsPanel.tsx split into FSLogixSettings component
+- [x] **COMP-06**: SettingsPanel.tsx under 300 lines after refactor
 
 ### Tech Debt - State
 
@@ -98,12 +98,12 @@ Deferred to future release.
 | INST-02 | Phase 1 | Complete |
 | INST-03 | Phase 1 | Complete |
 | INST-04 | Phase 1 | Complete |
-| COMP-01 | Phase 2 | Pending |
-| COMP-02 | Phase 2 | Pending |
-| COMP-03 | Phase 2 | Pending |
-| COMP-04 | Phase 2 | Pending |
-| COMP-05 | Phase 2 | Pending |
-| COMP-06 | Phase 2 | Pending |
+| COMP-01 | Phase 2 | Complete |
+| COMP-02 | Phase 2 | Complete |
+| COMP-03 | Phase 2 | Complete |
+| COMP-04 | Phase 2 | Complete |
+| COMP-05 | Phase 2 | Complete |
+| COMP-06 | Phase 2 | Complete |
 | STATE-01 | Phase 3 | Pending |
 | STATE-02 | Phase 3 | Pending |
 | STATE-03 | Phase 3 | Pending |
@@ -135,4 +135,4 @@ Deferred to future release.
 
 ---
 *Requirements defined: 2026-01-16*
-*Last updated: 2026-01-16 — Phase 1 requirements marked complete*
+*Last updated: 2026-01-16 — Phase 2 requirements marked complete*
