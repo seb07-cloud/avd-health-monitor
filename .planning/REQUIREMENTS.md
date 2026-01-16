@@ -51,11 +51,11 @@ Requirements for this refactor cycle.
 
 ### Testing
 
-- [ ] **TEST-01**: Integration tests for settings save/load roundtrip
-- [ ] **TEST-02**: Integration tests for mode switching flow
-- [ ] **TEST-03**: Unit tests for Zustand store slices
-- [ ] **TEST-04**: FSLogix path parsing tests
-- [ ] **TEST-05**: Tray icon state tests (where testable)
+- [x] **TEST-01**: Integration tests for settings save/load roundtrip
+- [x] **TEST-02**: Integration tests for mode switching flow
+- [x] **TEST-03**: Unit tests for Zustand store slices
+- [x] **TEST-04**: FSLogix path parsing tests
+- [x] **TEST-05**: Tray icon state tests (where testable)
 
 ### Features
 
@@ -118,11 +118,11 @@ Deferred to future release.
 | SEC-01 | Phase 6 | Complete |
 | SEC-02 | Phase 6 | Complete |
 | SEC-03 | Phase 6 | Complete |
-| TEST-01 | Phase 7 | Pending |
-| TEST-02 | Phase 7 | Pending |
-| TEST-03 | Phase 7 | Pending |
-| TEST-04 | Phase 7 | Pending |
-| TEST-05 | Phase 7 | Pending |
+| TEST-01 | Phase 7 | Complete |
+| TEST-02 | Phase 7 | Complete |
+| TEST-03 | Phase 7 | Complete |
+| TEST-04 | Phase 7 | Complete |
+| TEST-05 | Phase 7 | Complete |
 | FEAT-01 | Phase 8 | Pending |
 | FEAT-02 | Phase 8 | Pending |
 | FEAT-03 | Phase 8 | Pending |
@@ -135,4 +135,4 @@ Deferred to future release.
 
 ---
 *Requirements defined: 2026-01-16*
-*Last updated: 2026-01-16 — Phase 6 requirements marked complete*
+*Last updated: 2026-01-16 — Phase 7 requirements marked complete*
