@@ -1,8 +1,8 @@
-# AVD Health Monitor - Refactor & Improve
+# AVD Health Monitor
 
 ## What This Is
 
-Windows system tray application for real-time Azure Virtual Desktop (AVD) endpoint health monitoring. Built with Tauri 2 (Rust backend) and React/TypeScript frontend. Monitors network connectivity to AVD-required endpoints and FSLogix storage paths.
+Windows system tray application for real-time Azure Virtual Desktop (AVD) endpoint health monitoring. Built with Tauri 2 (Rust backend) and React/TypeScript frontend. Monitors network connectivity to AVD-required endpoints and FSLogix storage paths. Features per-user installation for enterprise deployment without admin privileges.
 
 ## Core Value
 
@@ -12,49 +12,40 @@ Reliable, unobtrusive AVD endpoint monitoring that helps IT admins identify conn
 
 ### Validated
 
-<!-- Existing capabilities that work -->
-
-- ✓ TCP/HTTP/HTTPS latency testing to AVD endpoints — existing
-- ✓ Session Host and End User monitoring modes — existing
-- ✓ FSLogix storage path monitoring — existing
-- ✓ Dynamic system tray icon reflecting health status — existing
-- ✓ Desktop notifications for endpoint failures — existing
-- ✓ Customizable latency thresholds — existing
-- ✓ Custom endpoint support — existing
-- ✓ Latency history with graphs — existing
-- ✓ Auto-start on Windows login — existing
-- ✓ Dark/light theme support — existing
+- TCP/HTTP/HTTPS latency testing to AVD endpoints — existing
+- Session Host and End User monitoring modes — existing
+- FSLogix storage path monitoring — existing
+- Dynamic system tray icon reflecting health status — existing
+- Desktop notifications for endpoint failures — existing
+- Customizable latency thresholds — existing
+- Custom endpoint support — existing
+- Latency history with graphs — existing
+- Auto-start on Windows login — existing
+- Dark/light theme support — existing
+- Per-user installation without admin privileges — v1.0
+- WiX MSI compilation — v1.0
+- NSIS installer builds — v1.0
+- Per-user or system-wide install choice — v1.0
+- SettingsPanel component refactor (5 components) — v1.0
+- Zustand slice architecture (4 slices) — v1.0
+- Race condition elimination (setTimeout removal) — v1.0
+- Rust-to-TypeScript type unification — v1.0
+- Settings JSON schema validation — v1.0
+- Portable mode OS API permission check — v1.0
+- Path traversal prevention — v1.0
+- Settings roundtrip tests — v1.0
+- Mode switching tests — v1.0
+- Store slice unit tests — v1.0
+- FSLogix path parsing tests — v1.0
+- Tray icon state tests — v1.0
+- Settings export to JSON — v1.0
+- Settings import from JSON — v1.0
+- Latency history CSV export — v1.0
+- Offline mode indicator — v1.0
 
 ### Active
 
-<!-- Current scope — improvements and fixes -->
-
-**Installer/Packaging:**
-- [ ] Per-user installation without admin privileges
-- [ ] Fix WiX compilation issues
-- [ ] Reliable MSI/NSIS installer builds
-
-**Tech Debt:**
-- [ ] Break up SettingsPanel.tsx into smaller components
-- [ ] Split useAppStore.ts into Zustand slices
-- [ ] Fix race conditions (replace setTimeout workarounds)
-- [ ] Unify types between Rust and TypeScript
-
-**Security:**
-- [ ] Validate settings JSON schema on load
-- [ ] Fix portable mode write test (use OS API)
-- [ ] Validate paths before external editor invocation
-
-**Test Coverage:**
-- [ ] Add integration tests
-- [ ] Add settings persistence tests
-- [ ] Add FSLogix tests
-- [ ] Add tray icon tests
-
-**New Features:**
-- [ ] Settings export/import
-- [ ] History export (CSV/JSON)
-- [ ] Offline mode / graceful degradation
+(None — define requirements for next milestone)
 
 ### Out of Scope
 
@@ -65,14 +56,23 @@ Reliable, unobtrusive AVD endpoint monitoring that helps IT admins identify conn
 
 ## Context
 
-Brownfield project with existing v0.7.0 codebase. Core functionality works. Primary pain points:
-- Installer requires admin privileges (blocking enterprise deployment)
-- WiX compilation issues on builds
-- Large files making maintenance difficult
-- Race conditions causing occasional flaky behavior
-- Minimal test coverage
+**Current state:** Shipped v1.0 with 9,537 LOC (TypeScript + Rust).
 
-Codebase analysis completed — see `.planning/codebase/` for detailed architecture, conventions, and concerns documentation.
+**Tech stack:** Tauri 2, React 19, TypeScript 5, Rust 1.75+, Zustand 5, Recharts, TailwindCSS.
+
+**Codebase health:**
+- 121 tests passing (86 frontend unit + 25 integration + 10 Rust)
+- CI runs type drift detection on all PRs
+- JSON schema validation on settings load
+- 4 Zustand slices for maintainable state
+
+**v2 candidates (from requirements archive):**
+- E2E tests with Tauri test driver
+- Visual regression tests
+- Performance benchmarks
+- Scheduled reports via email
+- Multi-endpoint batch import
+- Endpoint groups/tags
 
 ## Constraints
 
@@ -83,12 +83,15 @@ Codebase analysis completed — see `.planning/codebase/` for detailed architect
 
 ## Key Decisions
 
-<!-- Decisions made during this refactor -->
-
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Per-user install default | Avoid admin requirement for enterprise | — Pending |
-| Zustand slices pattern | Standard approach for large stores | — Pending |
+| Per-user install default | Avoid admin requirement for enterprise | Good |
+| Zustand slices pattern | Standard approach for large stores | Good |
+| NSIS for per-user, WiX for system-wide | Different deployment scenarios | Good |
+| ts-rs for type generation | Compile-time type safety | Good |
+| faccess for portable detection | No test file creation | Good |
+| JSON schema validation | Descriptive error messages | Good |
+| Consecutive failure threshold for offline | Avoid false positives | Good |
 
 ---
-*Last updated: 2026-01-16 after initialization*
+*Last updated: 2026-01-16 after v1.0 milestone*

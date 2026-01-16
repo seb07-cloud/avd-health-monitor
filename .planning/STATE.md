@@ -5,100 +5,37 @@
 See: .planning/PROJECT.md (updated 2026-01-16)
 
 **Core value:** Reliable, unobtrusive AVD endpoint monitoring
-**Current focus:** Milestone complete — all 8 phases verified
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 8 of 8 (Features)
-Plan: 3 of 3 complete
-Status: Milestone complete
-Last activity: 2026-01-16 — Completed 8-02-PLAN.md (CSV history export)
+Phase: v1.0 complete
+Plan: N/A
+Status: Ready to plan next milestone
+Last activity: 2026-01-16 — v1.0 milestone archived
 
-Progress: ██████████████████ 100% (22 plans of 22 estimated)
+Progress: Milestone complete
 
-## Performance Metrics
+## v1.0 Summary
 
-**Velocity:**
-- Total plans completed: 22
-- Average duration: 2.5 min
-- Total execution time: 54 min
+**Shipped:** 2026-01-16
 
-**By Phase:**
+- 8 phases, 21 plans
+- 31 requirements satisfied
+- 121 tests passing
+- 9,537 LOC
 
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 1-installer-fixes | 2 | 6 min | 3 min |
-| 2-component-refactor | 2 | 8 min | 4 min |
-| 3-state-refactor | 5 | 9 min | 1.8 min |
-| 4-race-conditions | 2 | 4 min | 2 min |
-| 5-type-unification | 2 | 5 min | 2.5 min |
-| 6-security | 2 | 6 min | 3 min |
-| 7-testing | 3 | 8 min | 2.7 min |
-| 8-features | 3 | 6 min | 2 min |
-
-**Recent Trend:**
-- Last 5 plans: 7-02 (2 min), 7-03 (2 min), 8-01 (2 min), 8-02 (2 min), 8-03 (2 min)
-- Trend: Consistent velocity
+**Archives:**
+- `.planning/milestones/v1.0-ROADMAP.md`
+- `.planning/milestones/v1.0-REQUIREMENTS.md`
+- `.planning/milestones/v1.0-MILESTONE-AUDIT.md`
 
 ## Accumulated Context
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
-
-| Date | Phase | Decision | Rationale |
-|------|-------|----------|-----------|
-| 2026-01-16 | 1-01 | NSIS currentUser mode for per-user install | "both" mode still requires admin |
-| 2026-01-16 | 1-01 | WiX as system-wide installer only | Custom perUser template adds maintenance burden |
-| 2026-01-16 | 1-01 | Explicit targets ["nsis", "msi"] | Avoids building unnecessary installers (dmg, appimage) |
-| 2026-01-16 | 1-02 | Explicit --bundles flag in CI | Ensures both installers built regardless of config changes |
-| 2026-01-16 | 1-02 | VBSCRIPT requirement documented | Future troubleshooting if WiX builds fail |
-| 2026-01-16 | 2-01 | Props interface pattern for extracted components | Pass data + callbacks, no direct store access |
-| 2026-01-16 | 2-01 | Validation logic in extracted component | ThresholdSettings uses useMemo internally |
-| 2026-01-16 | 2-02 | Local state for form editing | Prevents store pollution with transient data |
-| 2026-01-16 | 2-02 | useMemo for category grouping | Avoids recalculation on every render |
-| 2026-01-16 | 2-02 | Parent controls collapsed state | Consistent collapse behavior across sections |
-| 2026-01-16 | 3-01 | PersistedState in persistence module | Persistence-specific types kept with persistence helpers |
-| 2026-01-16 | 3-01 | STORAGE_KEY unchanged | Preserve user data during migration |
-| 2026-01-16 | 3-01 | handleMigration for v9 to v10 | Slice refactor is structure-compatible |
-| 2026-01-16 | 3-02 | get() for cross-slice access in configSlice | Accessing customEndpoints from EndpointSlice for persistence |
-| 2026-01-16 | 3-03 | Cross-slice access via get() returns full AppState | Enables config access from EndpointSlice |
-| 2026-01-16 | 3-03 | Persistence calls use state from get() | Config and customEndpoints accessed via get() for file persistence |
-| 2026-01-16 | 3-04 | FSLogix slice is self-contained | No cross-slice access needed |
-| 2026-01-16 | 3-05 | Spread all 4 slices using ...args pattern | Clean composition for Zustand store API |
-| 2026-01-16 | 3-05 | Version incremented to 10 | Slice refactor migration from v9 |
-| 2026-01-16 | 4-01 | Check current state before subscribe | Avoid unnecessary subscription if condition met |
-| 2026-01-16 | 4-01 | 5 second default timeout for waitForState | Prevents indefinite hanging |
-| 2026-01-16 | 4-01 | Graceful degradation on timeout | Still trigger test if endpoints timeout |
-| 2026-01-16 | 4-02 | Remove setTimeout since waitForEndpointsLoaded guarantees | Contract between SettingsPanel and App.tsx |
-| 2026-01-16 | 4-02 | Document contract in comments | Explain why setTimeout not needed |
-| 2026-01-16 | 5-01 | ts-rs 10.1.0 for Rust 1.75+ compatibility | 11.x requires Rust 1.88.0 |
-| 2026-01-16 | 5-01 | cfg_attr(test, derive(TS)) for test-time-only generation | Avoid runtime overhead |
-| 2026-01-16 | 5-01 | Theme enum replaces String | Compile-time theme validation |
-| 2026-01-16 | 5-01 | Re-export from types.ts | Maintains single import point |
-| 2026-01-16 | 5-02 | Typecheck job runs independently | No release-please dependency, runs on all pushes/PRs |
-| 2026-01-16 | 5-02 | git diff --exit-code for drift detection | Fails if generated types don't match committed |
-| 2026-01-16 | 5-02 | Combined bindings.ts from ts-rs output | Single file cleaner than multiple |
-| 2026-01-16 | 6-01 | faccess for portable detection | OS-native API avoids test file creation |
-| 2026-01-16 | 6-01 | canonicalize for path validation | Resolves symlinks and .. to prevent bypasses |
-| 2026-01-16 | 6-01 | validate_path_in_dir pattern | Security at command invocation boundary |
-| 2026-01-16 | 6-02 | JsonSchema on all settings types | Complete schema coverage for validation |
-| 2026-01-16 | 6-02 | Validate JSON Value before deserialize | Catches type mismatches early with descriptive errors |
-| 2026-01-16 | 6-02 | Empty object {} is valid | Backward compatible - serde defaults fill missing fields |
-| 2026-01-16 | 7-01 | vi.mock at test file level | Slice tests mock @tauri-apps/api/core directly |
-| 2026-01-16 | 7-01 | getState/setState pattern for store tests | No component rendering needed |
-| 2026-01-16 | 7-01 | __TAURI_INTERNALS__ mock structure | Tauri v2 compatibility |
-| 2026-01-16 | 7-02 | vi.mock at test file level for integration tests | Isolates Tauri invoke calls from file system |
-| 2026-01-16 | 7-02 | Mode switch flow simulation via store actions | Call setConfig, setEndpoints, triggerTestNow in sequence |
-| 2026-01-16 | 7-03 | Rust tests in typecheck job | Runs on all pushes/PRs, not just releases |
-| 2026-01-16 | 8-01 | Schema validation reused from 6-02 | Consistent validation for import |
-| 2026-01-16 | 8-01 | Native dialogs via plugin-dialog | Cross-platform file dialogs |
-| 2026-01-16 | 8-03 | lastOnlineTimestamp updates when going online | Not when going offline - tracks last known good connection |
-| 2026-01-16 | 8-03 | OFFLINE_THRESHOLD of 3 consecutive failures | Avoid false positives from single failures |
-| 2026-01-16 | 8-03 | Hook returns reportSuccess/reportFailure | Future latency service integration |
-| 2026-01-16 | 8-02 | UTF-8 BOM for Excel compatibility | Ensures CSV opens correctly in Excel |
-| 2026-01-16 | 8-02 | Date-stamped default filename | Easy organization of exports |
+Key decisions are logged in PROJECT.md Key Decisions table.
+Full decision history in archived STATE files per milestone.
 
 ### Pending Todos
 
@@ -106,11 +43,17 @@ None.
 
 ### Blockers/Concerns
 
-- WiX compilation issues - DOCUMENTED: VBSCRIPT requirement noted in CI workflow
-- Admin privilege requirement - RESOLVED: NSIS currentUser mode configured in 1-01
+None.
 
 ## Session Continuity
 
 Last session: 2026-01-16
-Stopped at: Phase 8 verified — Milestone complete, ready for audit
-Resume file: None — Ready for /gsd:audit-milestone
+Stopped at: v1.0 milestone archived
+Resume file: None — Ready for /gsd:discuss-milestone
+
+## Next Steps
+
+1. `/gsd:discuss-milestone` — thinking partner, creates context file
+2. `/gsd:new-milestone` — update PROJECT.md with new goals
+3. `/gsd:define-requirements` — scope what to build
+4. `/gsd:create-roadmap` — plan how to build it
