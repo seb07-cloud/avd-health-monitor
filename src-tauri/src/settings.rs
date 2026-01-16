@@ -7,6 +7,8 @@ use tauri::Manager;
 #[cfg(test)]
 use ts_rs::TS;
 
+use crate::validation::validate_settings_json;
+
 const SETTINGS_FILENAME: &str = "settings.json";
 const SESSIONHOST_ENDPOINTS_FILENAME: &str = "sessionhost-endpoints.json";
 const ENDUSER_ENDPOINTS_FILENAME: &str = "enduser-endpoints.json";
@@ -517,14 +519,26 @@ fn endpoints_from_file(endpoint_file: &EndpointFile) -> Vec<Endpoint> {
     endpoints
 }
 
-/// Load settings from file
+/// Load settings from file with schema validation
 pub fn load_settings() -> std::io::Result<SettingsFile> {
     let path = get_settings_path()?;
 
     if path.exists() {
         let content = fs::read_to_string(&path)?;
-        let settings: SettingsFile = serde_json::from_str(&content)
+
+        // Parse as generic JSON first for schema validation
+        let json_value: serde_json::Value = serde_json::from_str(&content)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData,
+                format!("Invalid JSON: {}", e)))?;
+
+        // Validate against schema (catches type mismatches, invalid values, etc.)
+        validate_settings_json(&json_value)
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+
+        // Deserialize from the validated Value (serde defaults will fill missing fields)
+        let settings: SettingsFile = serde_json::from_value(json_value)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+
         Ok(settings)
     } else {
         let settings = SettingsFile::default();

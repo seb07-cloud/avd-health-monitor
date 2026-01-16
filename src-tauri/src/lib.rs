@@ -14,6 +14,7 @@ mod tray_icon;
 mod logger;
 mod autostart;
 mod settings;
+mod validation;
 mod fslogix;
 mod path_safety;
 
