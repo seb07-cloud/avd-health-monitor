@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-16)
 ## Current Position
 
 Phase: 7 of 8 (Testing)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-01-16 — Completed 7-01-PLAN.md
+Last activity: 2026-01-16 — Completed 7-03-PLAN.md
 
-Progress: ████████████████░ ~80% (16 plans of ~20 estimated)
+Progress: █████████████████░ ~85% (17 plans of ~20 estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 2.6 min
-- Total execution time: 42 min
+- Total execution time: 44 min
 
 **By Phase:**
 
@@ -33,10 +33,10 @@ Progress: ████████████████░ ~80% (16 plans of 
 | 4-race-conditions | 2 | 4 min | 2 min |
 | 5-type-unification | 2 | 5 min | 2.5 min |
 | 6-security | 2 | 6 min | 3 min |
-| 7-testing | 1 | 4 min | 4 min |
+| 7-testing | 2 | 6 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 5-01 (3 min), 5-02 (2 min), 6-01 (3 min), 6-02 (3 min), 7-01 (4 min)
+- Last 5 plans: 5-02 (2 min), 6-01 (3 min), 6-02 (3 min), 7-01 (4 min), 7-03 (2 min)
 - Trend: Consistent velocity
 
 ## Accumulated Context
@@ -88,6 +88,7 @@ Recent decisions affecting current work:
 | 2026-01-16 | 7-01 | vi.mock at test file level | Slice tests mock @tauri-apps/api/core directly |
 | 2026-01-16 | 7-01 | getState/setState pattern for store tests | No component rendering needed |
 | 2026-01-16 | 7-01 | __TAURI_INTERNALS__ mock structure | Tauri v2 compatibility |
+| 2026-01-16 | 7-03 | Rust tests in typecheck job | Runs on all pushes/PRs, not just releases |
 
 ### Pending Todos
 
@@ -101,5 +102,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-16
-Stopped at: Completed 7-01-PLAN.md
+Stopped at: Completed 7-03-PLAN.md
 Resume file: .planning/phases/7-testing/7-02-PLAN.md
