@@ -69,8 +69,12 @@ jobs:
           cd src-tauri
           cargo test
 
+      # Build both installer types:
+      # - NSIS: Per-user install (no admin required) - installs to AppData
+      # - MSI: System-wide install (admin required) - for enterprise deployment
+      # Note: WiX (MSI) requires VBSCRIPT Windows feature enabled
       - name: Build application
-        run: pnpm tauri build
+        run: pnpm tauri build --bundles nsis,msi
 
       - name: Upload release assets
         shell: bash
