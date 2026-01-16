@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 use tauri::Manager;
+#[cfg(test)]
+use ts_rs::TS;
 
 const SETTINGS_FILENAME: &str = "settings.json";
 const SESSIONHOST_ENDPOINTS_FILENAME: &str = "sessionhost-endpoints.json";
@@ -9,6 +11,8 @@ const ENDUSER_ENDPOINTS_FILENAME: &str = "enduser-endpoints.json";
 
 /// Application mode - determines which endpoint file to use
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[cfg_attr(test, derive(TS))]
+#[cfg_attr(test, ts(export))]
 #[serde(rename_all = "lowercase")]
 pub enum AppMode {
     SessionHost,
@@ -21,7 +25,28 @@ impl Default for AppMode {
     }
 }
 
+/// Theme setting for the application UI
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[cfg_attr(test, derive(TS))]
+#[cfg_attr(test, ts(export))]
+#[serde(rename_all = "lowercase")]
+pub enum Theme {
+    Light,
+    Dark,
+    Nord,
+    Cyberpunk,
+    System,
+}
+
+impl Default for Theme {
+    fn default() -> Self {
+        Theme::System
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(test, derive(TS))]
+#[cfg_attr(test, ts(export))]
 pub struct LatencyThresholds {
     pub excellent: u32,
     pub good: u32,
@@ -129,6 +154,8 @@ pub struct EndpointFile {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(test, derive(TS))]
+#[cfg_attr(test, ts(export))]
 #[serde(rename_all = "camelCase")]
 pub struct AppConfig {
     #[serde(default = "default_mode")]
@@ -143,8 +170,8 @@ pub struct AppConfig {
     pub notifications_enabled: bool,
     #[serde(default)]
     pub auto_start: bool,
-    #[serde(default = "default_theme")]
-    pub theme: String,
+    #[serde(default)]
+    pub theme: Theme,
     #[serde(default = "default_alert_threshold")]
     pub alert_threshold: u32,
     #[serde(default = "default_alert_cooldown")]
@@ -173,10 +200,6 @@ fn default_retention_days() -> u32 {
     30
 }
 
-fn default_theme() -> String {
-    "system".to_string()
-}
-
 fn default_alert_threshold() -> u32 {
     3
 }
@@ -202,7 +225,7 @@ impl Default for AppConfig {
             thresholds: LatencyThresholds::default(),
             notifications_enabled: true,
             auto_start: false,
-            theme: "system".to_string(),
+            theme: Theme::System,
             alert_threshold: 3,
             alert_cooldown: 5,
             graph_time_range: 1,
@@ -708,5 +731,31 @@ mod tests {
         let mode = AppMode::SessionHost;
         let json = serde_json::to_string(&mode).unwrap();
         assert_eq!(json, "\"sessionhost\"");
+    }
+
+    #[test]
+    fn test_theme_serialization() {
+        let theme = Theme::Dark;
+        let json = serde_json::to_string(&theme).unwrap();
+        assert_eq!(json, "\"dark\"");
+
+        let theme = Theme::System;
+        let json = serde_json::to_string(&theme).unwrap();
+        assert_eq!(json, "\"system\"");
+    }
+}
+
+#[cfg(test)]
+mod ts_export {
+    use super::*;
+
+    #[test]
+    fn export_bindings() {
+        // This test generates TypeScript bindings
+        // Run with: TS_RS_EXPORT_DIR=../src/generated cargo test export_bindings
+        LatencyThresholds::export().unwrap();
+        AppConfig::export().unwrap();
+        AppMode::export().unwrap();
+        Theme::export().unwrap();
     }
 }

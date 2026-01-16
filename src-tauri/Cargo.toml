@@ -57,6 +57,9 @@ opt-level = 1
 # But keep dependencies optimized for better runtime performance
 opt-level = 3
 
+[dev-dependencies]
+ts-rs = "10.1.0"
+
 [profile.release]
 # Full optimization for release builds
 opt-level = 3
