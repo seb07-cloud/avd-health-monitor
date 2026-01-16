@@ -17,6 +17,7 @@ mod settings;
 mod validation;
 mod fslogix;
 mod path_safety;
+mod export;
 
 use tray_icon::{generate_tray_icon, IconStatus, LatencyThresholds};
 use logger::Logger;
@@ -407,6 +408,9 @@ pub fn run() {
             update_endpoint,
             get_fslogix_storage_paths,
             update_fslogix_path_muted,
+            export::export_settings_to_path,
+            export::import_settings_from_path,
+            export::write_text_to_path,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");
