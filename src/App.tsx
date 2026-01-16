@@ -283,6 +283,8 @@ function AppContent() {
 
   // Watch for pending test trigger (e.g., after mode switch)
   // Use Zustand subscribe to avoid React re-render timing issues
+  // Note: No setTimeout needed because triggerTestNow() is only called
+  // after waitForEndpointsLoaded() resolves (see SettingsPanel.tsx)
   useEffect(() => {
     const unsubscribe = useAppStore.subscribe(
       (state, prevState) => {
@@ -290,10 +292,9 @@ function AppContent() {
         if (state.pendingTestTrigger && !prevState.pendingTestTrigger) {
           // Clear the trigger immediately
           useAppStore.getState().clearTestTrigger();
-          // Small delay to ensure endpoints are fully loaded in the store
-          setTimeout(() => {
-            runAllTests();
-          }, 100);
+          // Run tests directly - endpoints are guaranteed loaded
+          // (waitForEndpointsLoaded in SettingsPanel ensures this)
+          runAllTests();
         }
       }
     );
