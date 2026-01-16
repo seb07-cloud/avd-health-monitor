@@ -92,6 +92,8 @@ Recent decisions affecting current work:
 | 2026-01-16 | 7-02 | vi.mock at test file level for integration tests | Isolates Tauri invoke calls from file system |
 | 2026-01-16 | 7-02 | Mode switch flow simulation via store actions | Call setConfig, setEndpoints, triggerTestNow in sequence |
 | 2026-01-16 | 7-03 | Rust tests in typecheck job | Runs on all pushes/PRs, not just releases |
+| 2026-01-16 | 8-01 | Schema validation reused from 6-02 | Consistent validation for import |
+| 2026-01-16 | 8-01 | Native dialogs via plugin-dialog | Cross-platform file dialogs |
 | 2026-01-16 | 8-03 | lastOnlineTimestamp updates when going online | Not when going offline - tracks last known good connection |
 | 2026-01-16 | 8-03 | OFFLINE_THRESHOLD of 3 consecutive failures | Avoid false positives from single failures |
 | 2026-01-16 | 8-03 | Hook returns reportSuccess/reportFailure | Future latency service integration |
