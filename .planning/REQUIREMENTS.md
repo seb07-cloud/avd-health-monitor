@@ -59,10 +59,10 @@ Requirements for this refactor cycle.
 
 ### Features
 
-- [ ] **FEAT-01**: User can export settings to JSON file
-- [ ] **FEAT-02**: User can import settings from JSON file
-- [ ] **FEAT-03**: User can export latency history to CSV
-- [ ] **FEAT-04**: App shows meaningful state when offline (graceful degradation)
+- [x] **FEAT-01**: User can export settings to JSON file
+- [x] **FEAT-02**: User can import settings from JSON file
+- [x] **FEAT-03**: User can export latency history to CSV
+- [x] **FEAT-04**: App shows meaningful state when offline (graceful degradation)
 
 ## v2 Requirements
 
@@ -123,10 +123,10 @@ Deferred to future release.
 | TEST-03 | Phase 7 | Complete |
 | TEST-04 | Phase 7 | Complete |
 | TEST-05 | Phase 7 | Complete |
-| FEAT-01 | Phase 8 | Pending |
-| FEAT-02 | Phase 8 | Pending |
-| FEAT-03 | Phase 8 | Pending |
-| FEAT-04 | Phase 8 | Pending |
+| FEAT-01 | Phase 8 | Complete |
+| FEAT-02 | Phase 8 | Complete |
+| FEAT-03 | Phase 8 | Complete |
+| FEAT-04 | Phase 8 | Complete |
 
 **Coverage:**
 - v1 requirements: 31 total
@@ -135,4 +135,4 @@ Deferred to future release.
 
 ---
 *Requirements defined: 2026-01-16*
-*Last updated: 2026-01-16 — Phase 7 requirements marked complete*
+*Last updated: 2026-01-16 — Phase 8 requirements marked complete (milestone complete)*

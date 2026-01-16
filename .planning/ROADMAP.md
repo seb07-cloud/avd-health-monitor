@@ -17,7 +17,7 @@ Comprehensive refactor of the AVD Health Monitor codebase. Starting with the imm
 - [x] **Phase 5: Type Unification** - Unify Rust/TypeScript types
 - [x] **Phase 6: Security** - Schema validation, path safety
 - [x] **Phase 7: Testing** - Integration and unit tests
-- [ ] **Phase 8: Features** - Export/import, offline mode
+- [x] **Phase 8: Features** - Export/import, offline mode
 
 ## Phase Details
 
@@ -105,7 +105,7 @@ Comprehensive refactor of the AVD Health Monitor codebase. Starting with the imm
   2. User can import settings from file
   3. User can export history to CSV
   4. App shows useful state when offline
-**Plans**: TBD
+**Plans**: 8-01 (settings export/import), 8-02 (history CSV export), 8-03 (offline resilience)
 
 ## Progress
 
@@ -121,4 +121,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 5. Type Unification | 2/2 | Complete | 2026-01-16 |
 | 6. Security | 2/2 | Complete | 2026-01-16 |
 | 7. Testing | 3/3 | Complete | 2026-01-16 |
-| 8. Features | 0/? | Not started | - |
+| 8. Features | 3/3 | Complete | 2026-01-16 |
